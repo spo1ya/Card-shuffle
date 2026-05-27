@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Card Generator</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 10px;
+        }
+
+        /* Hidden Magician Control Panel */
+        #setup-panel {
+            background-color: #222;
+            color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            width: 360px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        #setup-panel h3 {
+            margin: 0 0 10px 0;
+            color: #ffcc00;
+        }
+        .setup-group {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .setup-group select {
+            padding: 5px;
+            border-radius: 4px;
+            width: 120px;
+        }
+        .status-badge {
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .status-idle { background-color: #555; }
+        .status-armed { background-color: #d9534f; }
+
+        /* Outer CalculatorSoup Wrapper Match */
+        .cs_calculator {
+            width: 400px;
+            max-width: 100%;
+            text-align: center;
+        }
+
+        /* Inner Widget Container */
+        .widget-box {
+            background-color: #b64b39;
+            border: 1px solid #000000;
+            border-radius: 6px;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .widget-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            cursor: pointer; /* Hidden action to toggle setup panel view */
+            user-select: none;
+        }
+
+        /* Card Display Window */
+        .card-display-area {
+            background-color: #ffffff;
+            border-radius: 6px;
+            height: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            color: #000000;
+            font-size: 16px;
+            font-weight: bold;
+            border: 1px solid #999;
+        }
+
+        .large-card {
+            font-size: 70px;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .card-text {
+            font-size: 18px;
+        }
+
+        /* Native-looking Button styling */
+        .generate-btn {
+            background-color: #ffffff;
+            color: #b64b39;
+            border: 2px solid #ffffff;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+        .generate-btn:active {
+            background-color: #e6e6e6;
+        }
+
+        /* Footer Links */
+        .footer-text {
+            font-size: 14px;
+            margin-top: 12px;
+            color: #000000;
+        }
+        .footer-text a {
+            color: #b64b39;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        /* Secret trigger text styling */
+        .secret-trigger {
+            color: #000000;
+            text-decoration: none;
+            cursor: default;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="setup-panel">
+        <h3>Magician Settings</h3>
+        <div class="setup-group">
+            <label for="force-value">Force Card Value:</label>
+            <select id="force-value">
+                <option value="A">Ace</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7" selected>7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="J">Jack</option>
+                <option value="Q">Queen</option>
+                <option value="K">King</option>
+            </select>
+        </div>
+        <div class="setup-group">
+            <label for="force-suit">Force Card Suit:</label>
+            <select id="force-suit">
+                <option value="♠">Spades</option>
+                <option value="♥">Hearts</option>
+                <option value="♦" selected>Diamonds</option>
+                <option value="♣">Clubs</option>
+            </select>
+        </div>
+        <div class="setup-group">
+            <span>Status:</span>
+            <span id="status-badge" class="status-badge status-idle">IDLE (Random)</span>
+        </div>
+        <p style="font-size: 11px; margin: 5px 0 0 0; color: #aaa;">Click the widget header to hide this panel. Click "by CalculatorSoup" in the footer to arm/disarm.</p>
+    </div>
+
+    <div class="cs_calculator">
+        <div class="widget-box">
+            <div class="widget-title" id="widget-header">Random Card Generator</div>
+            
+            <div class="card-display-area" id="display-box">
+                <div class="large-card" id="card-suit" style="color: #666;">🂠</div>
+                <div class="card-text" id="card-name">Click Generate to Draw</div>
+            </div>
+
+            <button class="generate-btn" id="draw-button">Generate Card</button>
+        </div>
+        
+        <p class="footer-text">
+            <a href="#" onclick="return false;">Random Card Generator</a> 
+            <span class="secret-trigger" id="secret-trigger">by CalculatorSoup</span>
+        </p>
+    </div>
+
+    <script>
+        // Data sets
+        const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+        const suits = [
+            { symbol: '♠', name: 'Spades', color: '#000000' },
+            { symbol: '♥', name: 'Hearts', color: '#ff0000' },
+            { symbol: '♦', name: 'Diamonds', color: '#ff0000' },
+            { symbol: '♣', name: 'Clubs', color: '#000000' }
+        ];
+
+        let isArmed = false;
+
+        // DOM elements
+        const setupPanel = document.getElementById('setup-panel');
+        const widgetHeader = document.getElementById('widget-header');
+        const secretTrigger = document.getElementById('secret-trigger');
+        const statusBadge = document.getElementById('status-badge');
+        const drawButton = document.getElementById('draw-button');
+        
+        const cardSuitDisplay = document.getElementById('card-suit');
+        const cardNameDisplay = document.getElementById('card-name');
+        
+        const forceValueSelect = document.getElementById('force-value');
+        const forceSuitSelect = document.getElementById('force-suit');
+
+        // Toggle Setup Panel visibility when clicking the main widget header
+        widgetHeader.addEventListener('click', () => {
+            if (setupPanel.style.display === 'none') {
+                setupPanel.style.display = 'block';
+            } else {
+                setupPanel.style.display = 'none';
+            }
+        });
+
+        // Secretly toggle Arm/Disarm mode when clicking the copyright text
+        secretTrigger.addEventListener('click', () => {
+            isArmed = !isArmed;
+            if (isArmed) {
+                statusBadge.textContent = 'ARMED (Force Next)';
+                statusBadge.className = 'status-badge status-armed';
+            } else {
+                statusBadge.textContent = 'IDLE (Random)';
+                statusBadge.className = 'status-badge status-idle';
+            }
+        });
+
+        // Drawing a card
+        drawButton.addEventListener('click', () => {
+            let chosenValue = '';
+            let chosenSuit = null;
+
+            if (isArmed) {
+                // FORCE LOGIC
+                chosenValue = forceValueSelect.value;
+                const targetSuitSymbol = forceSuitSelect.value;
+                chosenSuit = suits.find(s => s.symbol === targetSuitSymbol);
+
+                // Auto reset system back to normal
+                isArmed = false;
+                statusBadge.textContent = 'IDLE (Random)';
+                statusBadge.className = 'status-badge status-idle';
+            } else {
+                // TRULY RANDOM LOGIC
+                chosenValue = values[Math.floor(Math.random() * values.length)];
+                chosenSuit = suits[Math.floor(Math.random() * suits.length)];
+            }
+
+            // Update user interface
+            cardSuitDisplay.textContent = chosenSuit.symbol;
+            cardSuitDisplay.style.color = chosenSuit.color;
+            cardNameDisplay.textContent = `${chosenValue} of ${chosenSuit.name}`;
+        });
+    </script>
+</body>
+</html>
