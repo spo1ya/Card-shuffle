@@ -30,7 +30,7 @@
             position: relative;
             height: 45px;
             margin-top: 10px;
-            z-index: 10;
+            z-index: 50;
         }
 
         .card-title {
@@ -116,11 +116,6 @@
 
         /* ── CARD SHELL ────────────────────────────────────────── */
         .playing-card {
-            /*
-             * No background-color here — the SVG <img> fills 100% of the
-             * card shell, so a white base is unnecessary and can bleed.
-             * Border-radius clips the img via overflow: hidden.
-             */
             border-radius: 12px;
             width: 71vw;
             aspect-ratio: 203 / 288;
@@ -131,72 +126,60 @@
             -webkit-user-select: none;
             overflow: hidden;
 
-            /* Richer shadow — top shadow gives "lifted off table" depth */
+            /* Matches the clean depth shadows from the reference application video */
             box-shadow:
-                0 2px  4px rgba(0, 0, 0, 0.30),
-                0 8px 24px rgba(0, 0, 0, 0.55),
-                0 0   0   1px rgba(255,255,255,0.04) inset;
+                0 4px  10px rgba(0, 0, 0, 0.35),
+                0 12px 32px rgba(0, 0, 0, 0.6),
+                0 0   0   1px rgba(255,255,255,0.05) inset;
 
-            /* Start state — hidden below before animation fires */
+            /* Base initial state parameters before animation triggers */
             opacity: 0;
-            transform: translateY(60px) scale(0.94);
+            transform: translateY(120px) scale(0.92);
             z-index: 20;
+            will-change: transform, opacity;
         }
 
-        /* ── CARD IMAGE ────────────────────────────────────────── */
-        /*
-         * Using <img> instead of background-image gives:
-         *   • Crisp SVG rendering at any size (browser uses native SVG pipeline)
-         *   • Guaranteed fill — no background-size quirks
-         *   • Proper browser cache hits (same cache as preloaded Image objects)
-         *   • No distortion — SVG viewBox scales uniformly inside the container
-         */
         .card-img {
             width: 100%;
             height: 100%;
             display: block;
-            /* object-fit not set → browser stretches img to fill the div,
-               matching the card's 203/288 aspect ratio exactly */
         }
 
-        /* ── ENTER ANIMATION (spring overshoot) ────────────────── */
-        /*
-         * Multi-stop keyframes simulate a spring:
-         *   0%  → 60%  : fast rise from below
-         *   60% → 80%  : overshoot (card goes past center, slightly larger)
-         *   80% → 100% : settle back to resting position
-         *
-         * cubic-bezier(0.22, 1, 0.36, 1) is an easeOutQuint for the
-         * overall motion envelope; the mid-keyframes create the bounce.
+        /* ── EXACT TRANSITION ANIMATIONS ───────────────────────── */
+        /* * Replaced complex spring bouncing steps with the exact crisp ease-out deceleration curve
+         * used in native iOS interface frameworks.
          */
         .playing-card.entering {
-            animation: cardEnter 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            animation: cardSlideIn 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            z-index: 30; /* Forces incoming card to stack over the departing element */
         }
 
-        @keyframes cardEnter {
-            0%   { transform: translateY(95px)  scale(0.82); opacity: 0;   }
-            55%  { transform: translateY(-14px) scale(1.06); opacity: 1;   }
-            78%  { transform: translateY(4px)   scale(0.98); opacity: 1;   }
-            100% { transform: translateY(0)     scale(1);    opacity: 1;   }
-        }
-
-        /* ── LEAVE ANIMATION ───────────────────────────────────── */
-        /*
-         * Quick exit — dips slightly then flies up and out.
-         * Kept short (0.22s) so it clears before the new card lands.
-         * FIX: removed the invalid `z-index(10)` that was inside
-         *      the 0% transform (z-index is NOT a transform function
-         *      — it was silently invalidating the entire keyframe).
-         */
         .playing-card.leaving {
-            animation: cardLeave 0.22s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards;
-            z-index: 10;
+            animation: cardSlideOut 0.34s cubic-bezier(0.4, 0, 1, 1) forwards;
+            z-index: 10; /* Keeps outbound card underneath the main deck projection */
+            pointer-events: none;
         }
 
-        @keyframes cardLeave {
-            0%   { transform: translateY(0)     scale(1);    opacity: 1; }
-            30%  { transform: translateY(8px)   scale(0.97); opacity: 0.8; }
-            100% { transform: translateY(-88px) scale(0.88); opacity: 0; }
+        @keyframes cardSlideIn {
+            0% {
+                transform: translateY(140px) scale(0.9);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes cardSlideOut {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-160px) scale(0.92);
+                opacity: 0;
+            }
         }
 
         /* ── INITIAL PROMPT ────────────────────────────────────── */
@@ -207,7 +190,7 @@
             font-weight: 500;
             pointer-events: none;
             text-align: center;
-            z-index: 30;
+            z-index: 40;
         }
 
         /* ── BOTTOM BAR ────────────────────────────────────────── */
@@ -221,7 +204,7 @@
             box-sizing: border-box;
             color: #3a3a3a;
             font-size: 13px;
-            z-index: 10;
+            z-index: 50;
         }
         .cards-left {
             display: flex;
@@ -310,12 +293,10 @@
 
         const LABELS = { A:'Ace', J:'Jack', Q:'Queen', K:'King' };
 
-        // ── State ─────────────────────────────────────────────────
         let isArmed       = false;
         let runningCount  = 108;
         let currentCardEl = null;
 
-        // ── DOM refs ──────────────────────────────────────────────
         const bodyTrigger  = document.getElementById('body-trigger');
         const gearTrigger  = document.getElementById('gear-trigger');
         const setupPanel   = document.getElementById('setup-panel');
@@ -328,13 +309,6 @@
         const forceValue   = document.getElementById('force-value');
         const forceSuit    = document.getElementById('force-suit');
 
-        // ── Image cache ───────────────────────────────────────────
-        //
-        // Storing Image objects by key (e.g. "JS", "QH") in a plain
-        // object prevents the browser from garbage-collecting them
-        // after the initial preload, so every tap after the first
-        // renders from memory — no network round-trips, no flash.
-        //
         const imgCache = {};
 
         function preloadAll() {
@@ -343,37 +317,33 @@
                     const key = `${v}${s.id}`;
                     const img = new Image();
                     img.src   = `${key}.svg`;
-                    imgCache[key] = img;   // hold the reference
+                    imgCache[key] = img;
                 });
             });
         }
         preloadAll();
 
-        // ── Helpers ───────────────────────────────────────────────
         function isCached(key) {
             const img = imgCache[key];
             return img && img.complete && img.naturalWidth > 0;
         }
 
-        // ── Core render (called once image is confirmed ready) ─────
         function renderCard(val, suitObj) {
             const key = `${val}${suitObj.id}`;
 
-            // Exit the old card first
+            // Handle exit animation processing
             if (currentCardEl) {
                 const old = currentCardEl;
                 old.classList.remove('entering');
                 old.classList.add('leaving');
-                // Remove from DOM after exit animation finishes (220ms)
+                
+                // Sweeps out the card element node right as the slideOut keyframe loop resolves
                 setTimeout(() => {
                     if (old.parentNode) old.parentNode.removeChild(old);
-                }, 220);
+                }, 340);
             }
 
-            // Build the new card using an <img> tag
-            // — This is the key change for quality + filling:
-            //   <img> uses the browser's native SVG rendering pipeline,
-            //   which is sharper and more consistent than background-image.
+            // Build dynamic high-resolution card frame vector shell
             const card = document.createElement('div');
             card.className = 'playing-card entering';
 
@@ -386,7 +356,7 @@
             cardStage.appendChild(card);
             currentCardEl = card;
 
-            // Update the title label
+            // Animate card label
             displayTitle.classList.remove('visible');
             setTimeout(() => {
                 displayTitle.textContent = `${LABELS[val] || val} of ${suitObj.name}`;
@@ -395,53 +365,36 @@
             }, 60);
         }
 
-        // ── Deal logic ────────────────────────────────────────────
-        //
-        // If the image is already in the browser cache (after preload
-        // or a previous deal), renderCard fires synchronously — no delay.
-        // If not yet loaded (very first cold load), we wait for onload
-        // before animating in so the card never flies in blank.
-        //
         function dealCard(val, suitObj) {
             const key = `${val}${suitObj.id}`;
 
             if (isCached(key)) {
-                // Already in memory — instant render
                 renderCard(val, suitObj);
             } else {
-                // Wait for image, then render
                 const loader = new Image();
                 loader.onload = () => {
                     imgCache[key] = loader;
                     renderCard(val, suitObj);
                 };
-                loader.onerror = () => renderCard(val, suitObj); // graceful fallback
+                loader.onerror = () => renderCard(val, suitObj);
                 loader.src = `${key}.svg`;
             }
         }
 
-        // ── Settings panel ────────────────────────────────────────
         gearTrigger.addEventListener('click', e => {
             e.stopPropagation();
-            setupPanel.style.display =
-                setupPanel.style.display === 'block' ? 'none' : 'block';
+            setupPanel.style.display = setupPanel.style.display === 'block' ? 'none' : 'block';
         });
-        document.body.addEventListener('click', () => {
-            setupPanel.style.display = 'none';
-        });
+        document.body.addEventListener('click', () => { setupPanel.style.display = 'none'; });
         setupPanel.addEventListener('click', e => e.stopPropagation());
 
-        // ── Stealth arm (tap the count to prime force card) ───────
         stealthArm.addEventListener('click', e => {
             e.stopPropagation();
             isArmed = !isArmed;
             statusBadge.textContent = isArmed ? 'NEXT SELECTION FORCED' : 'RANDOM SELECTION';
-            statusBadge.className   = isArmed
-                ? 'status-badge status-armed'
-                : 'status-badge status-idle';
+            statusBadge.className   = isArmed ? 'status-badge status-armed' : 'status-badge status-idle';
         });
 
-        // ── Main tap ──────────────────────────────────────────────
         bodyTrigger.addEventListener('click', () => {
             if (promptText) promptText.style.display = 'none';
 
