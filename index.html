@@ -61,6 +61,7 @@
             display: none;
             background-color: #161616;
             border: 1px solid #262626;
+            padding: 166px;
             padding: 16px;
             border-radius: 14px;
             width: 320px;
@@ -144,8 +145,8 @@
             -webkit-user-select: none;
             opacity: 0;
             transform: translateY(40px);
-            color: #000000;
             box-sizing: border-box;
+            color: #000000;
         }
 
         /* Clean Native Fluid Dealing Velocity */
@@ -174,7 +175,7 @@
             text-align: center;
         }
 
-        /* Exact Index Corner Structuring Data via Figma spec */
+        /* Exact Index Corner Structuring Data (Figma Specs) */
         .component-corner {
             position: absolute;
             width: 35px;
@@ -235,27 +236,27 @@
         }
 
         .suit-vector-icon {
-            display: inline-block;
-            flex: none;
-            order: 0;
-            flex-grow: 0;
+            font-size: 20px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Traditional Center Court Illustration Area */
+        /* Center Court Image Canvas Window */
         .court-illustration-box {
             position: absolute;
             width: 135px;
             height: 216px;
             left: calc(50% - 135px/2);
             top: calc(50% - 216px/2);
-            background-size: cover;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
             background-position: center;
-            border-radius: 1px;
             box-sizing: border-box;
-            overflow: hidden;
         }
 
-        /* Numbered layout container */
+        /* Numbered layout container fallback */
         .center-pips {
             position: absolute;
             width: 135px;
@@ -384,19 +385,11 @@
     <script>
         const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
         const suits = [
-            { symbol: '♠', name: 'Spades', color: '#211C1D', rawWidth: '17px', rawHeight: '20px', borderSize: '3px' }, 
-            { symbol: '♥', name: 'Hearts', color: '#BC1E24', rawWidth: '18px', rawHeight: '18px', borderSize: '3px' },  
-            { symbol: '♦', name: 'Diamonds', color: '#BC1E24', rawWidth: '15px', rawHeight: '20px', borderSize: '2px' },
-            { symbol: '♣', name: 'Clubs', color: '#211C1D', rawWidth: '19px', rawHeight: '20px', borderSize: '3px' }   
+            { symbol: '♠', id: 'S', name: 'Spades', color: '#211C1D', border: '3px' }, 
+            { symbol: '♥', id: 'H', name: 'Hearts', color: '#BC1E24', border: '3px' },  
+            { symbol: '♦', id: 'D', name: 'Diamonds', color: '#BC1E24', border: '2px' },
+            { symbol: '♣', id: 'C', name: 'Clubs', color: '#211C1D', border: '3px' }   
         ];
-
-        // Base64 encoded SVGs matching the uploaded Jack illustrations perfectly
-        const courtGraphics = {
-            'J♠': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 135 216"><rect width="135" height="216" fill="white"/><path d="M10,10 L125,10 L125,206 L10,206 Z" fill="none" stroke="%23211C1D" stroke-width="2"/><circle cx="67" cy="108" r="30" fill="none" stroke="%23211C1D" stroke-width="2"/><path d="M40,75 Q67,45 95,75 Q115,120 67,160 Q19,120 40,75 Z" fill="%23211C1D" opacity="0.15"/></svg>`,
-            'J♥': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 135 216"><rect width="135" height="216" fill="white"/><path d="M10,10 L125,10 L125,206 L10,206 Z" fill="none" stroke="%23BC1E24" stroke-width="2"/><circle cx="67" cy="108" r="30" fill="none" stroke="%23BC1E24" stroke-width="2"/><path d="M67,80 C67,80 45,50 25,75 C10,95 35,140 67,165 C99,140 124,95 109,75 C89,50 67,80 67,80 Z" fill="%23BC1E24" opacity="0.15"/></svg>`,
-            'J♦': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 135 216"><rect width="135" height="216" fill="white"/><path d="M10,10 L125,10 L125,206 L10,206 Z" fill="none" stroke="%23BC1E24" stroke-width="2"/><div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:80px;color:%23BC1E24;opacity:0.25">♦</div></svg>`,
-            'J♣': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 135 216"><rect width="135" height="216" fill="white"/><path d="M10,10 L125,10 L125,206 L10,206 Z" fill="none" stroke="%23211C1D" stroke-width="2"/><circle cx="67" cy="108" r="30" fill="none" stroke="%23211C1D" stroke-width="2"/><path d="M67,95 A18,18 0 1,1 55,120 A18,18 0 1,1 79,120 A18,18 0 1,1 67,95 Z" fill="%23211C1D" opacity="0.15"/></svg>`
-        };
 
         let isArmed = false;
         let runningCount = 108;
@@ -462,7 +455,7 @@
             shadow1.style.display = 'block';
             shadow2.style.display = 'block';
 
-            // Apply global index styling rules matching your design specifications
+            // Apply corner index typography properties
             document.querySelectorAll('.val-idx').forEach(el => {
                 el.textContent = val;
                 el.style.color = suitObj.color;
@@ -471,11 +464,9 @@
             document.querySelectorAll('.corner-suit-symbol').forEach(el => {
                 el.textContent = suitObj.symbol;
                 el.style.color = suitObj.color;
-                el.style.width = suitObj.rawWidth;
-                el.style.height = suitObj.rawHeight;
             });
 
-            buildFigmaCardContent(val, suitObj);
+            buildCardCenterGraphic(val, suitObj);
 
             displayTitle.classList.remove('visible');
             setTimeout(() => {
@@ -485,28 +476,24 @@
             }, 60);
         });
 
-        function buildFigmaCardContent(val, suit) {
+        function buildCardCenterGraphic(val, suit) {
             cardFaceCenter.innerHTML = '';
-            const lookupKey = `${val}${suit.symbol}`;
 
-            // Check if it's a court card with an available vector illustration layout
-            if (['J', 'Q', 'K'].includes(val)) {
+            // If it's a Jack, pull the graphic straight from your GitHub repository folder
+            if (val === 'J') {
                 const courtDiv = document.createElement('div');
                 courtDiv.className = 'court-illustration-box';
-                courtDiv.style.border = `${suit.borderSize} solid #000000`;
+                courtDiv.style.border = `${suit.border} solid #000000`;
                 
-                // Use a default fallback schematic vector if a custom face image isn't explicitly defined
-                if (courtGraphics[lookupKey]) {
-                    courtDiv.style.backgroundImage = `url("${courtGraphics[lookupKey]}")`;
-                } else {
-                    courtDiv.style.backgroundImage = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 135 216"><rect width="135" height="216" fill="white" stroke="black" stroke-width="2"/><text x="50%" y="55%" font-family="sans-serif" font-size="40" text-anchor="middle" fill="${suit.color.replace('#', '%23')}">${val}${suit.symbol}</text></svg>')`;
-                }
+                // Generates standard filenames like JD.png, JH.png, JS.png, JC.png
+                const imageFilename = `J${suit.id}.png`; 
+                courtDiv.style.backgroundImage = `url('${imageFilename}')`;
                 
                 cardFaceCenter.appendChild(courtDiv);
                 return;
             }
 
-            // Fallback render engine for handling standard numbered configurations
+            // Procedural layout logic for standard numeric options
             const pipsContainer = document.createElement('div');
             pipsContainer.className = 'center-pips';
             pipsContainer.style.color = suit.color;
@@ -522,6 +509,7 @@
             else if (val === '8') coordinates = [{ x: 15, y: 10 }, { x: 65, y: 10 }, { x: 40, y: 27 }, { x: 15, y: 44 }, { x: 65, y: 44 }, { x: 40, y: 61, inv: true }, { x: 15, y: 78, inv: true }, { x: 65, y: 78, inv: true }];
             else if (val === '9') coordinates = [{ x: 15, y: 10 }, { x: 65, y: 10 }, { x: 15, y: 32 }, { x: 65, y: 32 }, { x: 40, y: 44 }, { x: 15, y: 56, inv: true }, { x: 65, y: 56, inv: true }, { x: 15, y: 78, inv: true }, { x: 65, y: 78, inv: true }];
             else if (val === '10') coordinates = [{ x: 15, y: 10 }, { x: 65, y: 10 }, { x: 40, y: 21 }, { x: 15, y: 32 }, { x: 65, y: 32 }, { x: 15, y: 56, inv: true }, { x: 65, y: 56, inv: true }, { x: 40, y: 67, inv: true }, { x: 15, y: 78, inv: true }, { x: 65, y: 78, inv: true }];
+            else if (['Q', 'K'].includes(val)) coordinates = [{ x: 40, y: 42, size: 30 }]; // Simple temporary display until you add Q/K pictures
 
             coordinates.forEach(coord => {
                 const pipDiv = document.createElement('div');
