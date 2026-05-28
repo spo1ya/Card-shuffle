@@ -145,8 +145,7 @@
             opacity: 0;
             transform: translateY(40px);
             box-sizing: border-box;
-            color: #000000;
-            overflow: hidden; /* Ensures full-card images stay contained within corners */
+            overflow: hidden; 
         }
 
         /* Clean Native Fluid Dealing Velocity */
@@ -175,86 +174,8 @@
             text-align: center;
         }
 
-        /* Exact Index Corner Structuring Data (Figma Specs) */
-        .component-corner {
-            position: absolute;
-            width: 35px;
-            height: 73px;
-            box-sizing: border-box;
-            z-index: 5;
-        }
-        
-        .component-corner.top-left {
-            left: 0px;
-            top: 0px;
-        }
-        
-        .component-corner.bottom-right {
-            left: 168px;
-            top: 215px;
-            transform: rotate(-180deg);
-        }
-
-        .index-letter {
-            position: absolute;
-            width: 20px;
-            height: 45px;
-            left: 7px;
-            top: 3px;
-            font-family: 'SF Compact Rounded', -apple-system, sans-serif;
-            font-style: normal;
-            font-weight: 400;
-            font-size: 41px;
-            line-height: 45px;
-            text-align: center;
-        }
-        
-        .component-corner.bottom-right .index-letter {
-            left: 8px;
-            top: 25px;
-            transform: rotate(-180deg);
-        }
-
-        .corner-suit-wrapper {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-            padding: 10px;
-            gap: 10px;
-            position: absolute;
-            width: 18px;
-            height: 20px;
-            left: 9px;
-            top: 48px;
-            box-sizing: border-box;
-        }
-        
-        .component-corner.bottom-right .corner-suit-wrapper {
-            left: 8px;
-            top: 5px;
-            transform: rotate(-180deg);
-        }
-
-        .suit-vector-icon {
-            font-size: 20px;
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Full Card / Center Court Graphics Container Box */
-        #card-face-center {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            left: 0;
-            top: 0;
-            box-sizing: border-box;
-        }
-
-        .court-illustration-box {
+        /* Image Display Window filling entire card space */
+        .card-image-canvas {
             position: absolute;
             width: 100%;
             height: 100%;
@@ -264,30 +185,6 @@
             background-repeat: no-repeat;
             background-position: center;
             box-sizing: border-box;
-        }
-
-        /* Numbered layout container fallback */
-        .center-pips {
-            position: absolute;
-            width: 135px;
-            height: 216px;
-            left: calc(50% - 135px/2);
-            top: calc(50% - 216px/2);
-            box-sizing: border-box;
-        }
-
-        .pip {
-            position: absolute;
-            font-size: 24px;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1;
-        }
-        .pip.inverted {
-            transform: rotate(180deg);
         }
 
         /* Screen Bottom Actions Footers */
@@ -366,21 +263,7 @@
         <div class="deck-pile-shadow two" id="shadow-2" style="display: none;"></div>
 
         <div class="playing-card" id="active-card">
-            <div class="component-corner top-left">
-                <div class="index-letter val-idx">J</div>
-                <div class="corner-suit-wrapper">
-                    <span class="suit-vector-icon corner-suit-symbol">♦</span>
-                </div>
-            </div>
-            
-            <div id="card-face-center"></div>
-            
-            <div class="component-corner bottom-right">
-                <div class="index-letter val-idx">J</div>
-                <div class="corner-suit-wrapper">
-                    <span class="suit-vector-icon corner-suit-symbol">♦</span>
-                </div>
-            </div>
+            <div id="card-image-display" class="card-image-canvas"></div>
         </div>
     </div>
 
@@ -414,7 +297,7 @@
         
         const activeCard = document.getElementById('active-card');
         const displayTitle = document.getElementById('display-title');
-        const cardFaceCenter = document.getElementById('card-face-center');
+        const cardImageDisplay = document.getElementById('card-image-display');
         const shadow1 = document.getElementById('shadow-1');
         const shadow2 = document.getElementById('shadow-2');
 
@@ -465,18 +348,9 @@
             shadow1.style.display = 'block';
             shadow2.style.display = 'block';
 
-            // Apply corner index typography properties
-            document.querySelectorAll('.val-idx').forEach(el => {
-                el.textContent = val;
-                el.style.color = suitObj.color;
-            });
-            
-            document.querySelectorAll('.corner-suit-symbol').forEach(el => {
-                el.textContent = suitObj.symbol;
-                el.style.color = suitObj.color;
-            });
-
-            buildCardCenterGraphic(val, suitObj);
+            // Construct filename template for the active deck card selection
+            const imageFilename = `${val}${suitObj.id}.png`;
+            cardImageDisplay.style.backgroundImage = `url('${imageFilename}')`;
 
             displayTitle.classList.remove('visible');
             setTimeout(() => {
@@ -485,57 +359,6 @@
                 displayTitle.classList.add('visible');
             }, 60);
         });
-
-        function buildCardCenterGraphic(val, suit) {
-            cardFaceCenter.innerHTML = '';
-            
-            // Default visibility state for non-court cards
-            document.querySelectorAll('.component-corner').forEach(el => el.style.display = 'block');
-
-            // When a Jack is drawn, clear programmatic layouts and load full images directly
-            if (val === 'J') {
-                document.querySelectorAll('.component-corner').forEach(el => el.style.display = 'none');
-                
-                const courtDiv = document.createElement('div');
-                courtDiv.className = 'court-illustration-box';
-                
-                // Construct standard image filename (e.g. JD.png, JH.png)
-                const imageFilename = `J${suit.id}.png`; 
-                courtDiv.style.backgroundImage = `url('${imageFilename}')`;
-                
-                cardFaceCenter.appendChild(courtDiv);
-                return;
-            }
-
-            // Procedural layout logic for regular numbered options
-            const pipsContainer = document.createElement('div');
-            pipsContainer.className = 'center-pips';
-            pipsContainer.style.color = suit.color;
-
-            let coordinates = [];
-            if (val === 'A') coordinates = [{ x: 40, y: 42, size: 36 }];
-            else if (val === '2') coordinates = [{ x: 40, y: 10 }, { x: 40, y: 78, inv: true }];
-            else if (val === '3') coordinates = [{ x: 40, y: 10 }, { x: 40, y: 44 }, { x: 40, y: 78, inv: true }];
-            else if (val === '4') coordinates = [{ x: 15, y: 10 }, { x: 65, y: 10 }, { x: 15, y: 78, inv: true }, { x: 65, y: 78, inv: true }];
-            else if (val === '5') coordinates = [{ x: 15, y: 10 }, { x: 65, y: 10 }, { x: 40, y: 44 }, { x: 15, y: 78, inv: true }, { x: 65, y: 78, inv: true }];
-            else if (val === '6') coordinates = [{ x: 15, y: 10 }, { x: 65, y: 10 }, { x: 15, y: 44 }, { x: 65, y: 44 }, { x: 15, y: 78, inv: true }, { x: 65, y: 78, inv: true }];
-            else if (val === '7') coordinates = [{ x: 15, y: 10 }, { x: 65, y: 10 }, { x: 40, y: 27 }, { x: 15, y: 44 }, { x: 65, y: 44 }, { x: 15, y: 78, inv: true }, { x: 65, y: 78, inv: true }];
-            else if (val === '8') coordinates = [{ x: 15, y: 10 }, { x: 65, y: 10 }, { x: 40, y: 27 }, { x: 15, y: 44 }, { x: 65, y: 44 }, { x: 40, y: 61, inv: true }, { x: 15, y: 78, inv: true }, { x: 65, y: 78, inv: true }];
-            else if (val === '9') coordinates = [{ x: 15, y: 10 }, { x: 65, y: 10 }, { x: 15, y: 32 }, { x: 65, y: 32 }, { x: 40, y: 44 }, { x: 15, y: 56, inv: true }, { x: 65, y: 56, inv: true }, { x: 15, y: 78, inv: true }, { x: 65, y: 78, inv: true }];
-            else if (val === '10') coordinates = [{ x: 15, y: 10 }, { x: 65, y: 10 }, { x: 40, y: 21 }, { x: 15, y: 32 }, { x: 65, y: 32 }, { x: 15, y: 56, inv: true }, { x: 65, y: 56, inv: true }, { x: 40, y: 67, inv: true }, { x: 15, y: 78, inv: true }, { x: 65, y: 78, inv: true }];
-            else if (['Q', 'K'].includes(val)) coordinates = [{ x: 40, y: 42, size: 30 }]; 
-
-            coordinates.forEach(coord => {
-                const pipDiv = document.createElement('div');
-                pipDiv.className = `pip ${coord.inv ? 'inverted' : ''}`;
-                pipDiv.style.left = `${coord.x}%`;
-                pipDiv.style.top = `${coord.y}%`;
-                if (coord.size) pipDiv.style.fontSize = `${coord.size}px`;
-                pipDiv.textContent = suit.symbol;
-                pipsContainer.appendChild(pipDiv);
-            });
-            cardFaceCenter.appendChild(pipsContainer);
-        }
     </script>
 </body>
 </html>
