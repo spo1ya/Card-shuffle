@@ -20,7 +20,7 @@
             overflow: hidden;
         }
 
-        /* Top Bar Label */
+        /* ── TOP BAR ───────────────────────────────────────────── */
         .top-bar {
             width: 100%;
             max-width: 360px;
@@ -41,11 +41,9 @@
             transition: opacity 0.2s ease-out;
             letter-spacing: -0.3px;
         }
-        .card-title.visible {
-            opacity: 1;
-        }
+        .card-title.visible { opacity: 1; }
 
-        /* Invisible Config Menu Trigger Hitbox */
+        /* ── SECRET GEAR ───────────────────────────────────────── */
         .secret-gear {
             position: absolute;
             right: 20px;
@@ -56,7 +54,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Stealth Settings Panel Drawer */
+        /* ── SETTINGS PANEL ────────────────────────────────────── */
         #setup-panel {
             display: none;
             background-color: #161616;
@@ -102,10 +100,10 @@
             border-radius: 6px;
             font-size: 11px;
         }
-        .status-idle { background-color: #262626; color: #777; }
+        .status-idle  { background-color: #262626; color: #777; }
         .status-armed { background-color: #dc2626; color: #fff; }
 
-        /* Card Stage Workspace Canvas Area */
+        /* ── CARD STAGE ────────────────────────────────────────── */
         .card-container {
             flex: 1;
             display: flex;
@@ -113,13 +111,16 @@
             align-items: center;
             width: 100%;
             position: relative;
-            overflow: hidden; 
+            overflow: hidden;
         }
 
-        /* The base shell layout for dynamically injected cards */
+        /* ── CARD SHELL ────────────────────────────────────────── */
         .playing-card {
-            background-color: #FFFFFF; /* Hardcoded solid base prevents transparency issues */
-            box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.4), 0px 4px 8px #9DB3CE;
+            /*
+             * No background-color here — the SVG <img> fills 100% of the
+             * card shell, so a white base is unnecessary and can bleed.
+             * Border-radius clips the img via overflow: hidden.
+             */
             border-radius: 12px;
             width: 71vw;
             aspect-ratio: 203 / 288;
@@ -128,53 +129,77 @@
             position: absolute;
             user-select: none;
             -webkit-user-select: none;
-            
-            /* SVG Rendering Controls */
-            background-size: 100% 100%;
-            background-repeat: no-repeat;
-            background-position: center;
-            
-            /* Start state parameters for deal animation transitions */
-            opacity: 0;
-            transform: translateY(60px) scale(0.95);
-            z-index: 20;
             overflow: hidden;
+
+            /* Richer shadow — top shadow gives "lifted off table" depth */
+            box-shadow:
+                0 2px  4px rgba(0, 0, 0, 0.30),
+                0 8px 24px rgba(0, 0, 0, 0.55),
+                0 0   0   1px rgba(255,255,255,0.04) inset;
+
+            /* Start state — hidden below before animation fires */
+            opacity: 0;
+            transform: translateY(60px) scale(0.94);
+            z-index: 20;
         }
 
-        /* Smooth Incoming Element Transition Definition */
+        /* ── CARD IMAGE ────────────────────────────────────────── */
+        /*
+         * Using <img> instead of background-image gives:
+         *   • Crisp SVG rendering at any size (browser uses native SVG pipeline)
+         *   • Guaranteed fill — no background-size quirks
+         *   • Proper browser cache hits (same cache as preloaded Image objects)
+         *   • No distortion — SVG viewBox scales uniformly inside the container
+         */
+        .card-img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            /* object-fit not set → browser stretches img to fill the div,
+               matching the card's 203/288 aspect ratio exactly */
+        }
+
+        /* ── ENTER ANIMATION (spring overshoot) ────────────────── */
+        /*
+         * Multi-stop keyframes simulate a spring:
+         *   0%  → 60%  : fast rise from below
+         *   60% → 80%  : overshoot (card goes past center, slightly larger)
+         *   80% → 100% : settle back to resting position
+         *
+         * cubic-bezier(0.22, 1, 0.36, 1) is an easeOutQuint for the
+         * overall motion envelope; the mid-keyframes create the bounce.
+         */
         .playing-card.entering {
-            animation: cardEnter 0.32s cubic-bezier(0.215, 0.610, 0.355, 1) forwards;
-        }
-
-        /* Outgoing Element Transition Definition */
-        .playing-card.leaving {
-            animation: cardLeave 0.28s cubic-bezier(0.550, 0.055, 0.675, 0.19) forwards;
-            z-index: 10; 
+            animation: cardEnter 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
 
         @keyframes cardEnter {
-            0% {
-                transform: translateY(70px) scale(0.94);
-                opacity: 0;
-            }
-            100% {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
+            0%   { transform: translateY(95px)  scale(0.82); opacity: 0;   }
+            55%  { transform: translateY(-14px) scale(1.06); opacity: 1;   }
+            78%  { transform: translateY(4px)   scale(0.98); opacity: 1;   }
+            100% { transform: translateY(0)     scale(1);    opacity: 1;   }
+        }
+
+        /* ── LEAVE ANIMATION ───────────────────────────────────── */
+        /*
+         * Quick exit — dips slightly then flies up and out.
+         * Kept short (0.22s) so it clears before the new card lands.
+         * FIX: removed the invalid `z-index(10)` that was inside
+         *      the 0% transform (z-index is NOT a transform function
+         *      — it was silently invalidating the entire keyframe).
+         */
+        .playing-card.leaving {
+            animation: cardLeave 0.22s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards;
+            z-index: 10;
         }
 
         @keyframes cardLeave {
-            0% {
-                transform: translateY(0) scale(1) z-index(10);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-90px) scale(0.92);
-                opacity: 0;
-            }
+            0%   { transform: translateY(0)     scale(1);    opacity: 1; }
+            30%  { transform: translateY(8px)   scale(0.97); opacity: 0.8; }
+            100% { transform: translateY(-88px) scale(0.88); opacity: 0; }
         }
 
-        /* Start Prompt Label */
+        /* ── INITIAL PROMPT ────────────────────────────────────── */
         .initial-prompt {
             position: absolute;
             font-size: 18px;
@@ -185,7 +210,7 @@
             z-index: 30;
         }
 
-        /* Screen Bottom Actions Footers */
+        /* ── BOTTOM BAR ────────────────────────────────────────── */
         .bottom-bar {
             width: 100%;
             max-width: 360px;
@@ -232,20 +257,28 @@
         <div class="setup-group">
             <label for="force-value">Force Value:</label>
             <select id="force-value">
-                <option value="A">Ace</option><option value="2">2</option>
-                <option value="3">3</option><option value="4">4</option>
-                <option value="5">5</option><option value="6">6</option>
-                <option value="7">7</option><option value="8">8</option>
-                <option value="9">9</option><option value="10">10</option>
-                <option value="J" selected>Jack</option><option value="Q">Queen</option>
+                <option value="A">Ace</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="J" selected>Jack</option>
+                <option value="Q">Queen</option>
                 <option value="K">King</option>
             </select>
         </div>
         <div class="setup-group">
             <label for="force-suit">Force Suit:</label>
             <select id="force-suit">
-                <option value="♠">Spades</option><option value="♥">Hearts</option>
-                <option value="♦" selected>Diamonds</option><option value="♣">Clubs</option>
+                <option value="♠">Spades</option>
+                <option value="♥">Hearts</option>
+                <option value="♦" selected>Diamonds</option>
+                <option value="♣">Clubs</option>
             </select>
         </div>
         <div class="setup-group">
@@ -267,114 +300,170 @@
     </div>
 
     <script>
-        const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+        const values = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
         const suits = [
-            { symbol: '♠', id: 'S', name: 'Spades', color: '#211C1D' }, 
-            { symbol: '♥', id: 'H', name: 'Hearts', color: '#BC1E24' },  
-            { symbol: '♦', id: 'D', name: 'Diamonds', color: '#BC1E24' },
-            { symbol: '♣', id: 'C', name: 'Clubs', color: '#211C1D' }   
+            { symbol:'♠', id:'S', name:'Spades',   color:'#211C1D' },
+            { symbol:'♥', id:'H', name:'Hearts',   color:'#BC1E24' },
+            { symbol:'♦', id:'D', name:'Diamonds', color:'#BC1E24' },
+            { symbol:'♣', id:'C', name:'Clubs',    color:'#211C1D' }
         ];
 
-        let isArmed = false;
-        let runningCount = 108;
-        let currentCardElement = null; 
+        const LABELS = { A:'Ace', J:'Jack', Q:'Queen', K:'King' };
 
-        const bodyTrigger = document.getElementById('body-trigger');
-        const gearTrigger = document.getElementById('gear-trigger');
-        const setupPanel = document.getElementById('setup-panel');
-        const stealthArm = document.getElementById('stealth-arm');
-        const statusBadge = document.getElementById('status-badge');
-        const countNum = document.getElementById('count-num');
-        const promptText = document.getElementById('prompt-text');
-        
-        const cardStage = document.getElementById('card-stage'); 
+        // ── State ─────────────────────────────────────────────────
+        let isArmed       = false;
+        let runningCount  = 108;
+        let currentCardEl = null;
+
+        // ── DOM refs ──────────────────────────────────────────────
+        const bodyTrigger  = document.getElementById('body-trigger');
+        const gearTrigger  = document.getElementById('gear-trigger');
+        const setupPanel   = document.getElementById('setup-panel');
+        const stealthArm   = document.getElementById('stealth-arm');
+        const statusBadge  = document.getElementById('status-badge');
+        const countNum     = document.getElementById('count-num');
+        const promptText   = document.getElementById('prompt-text');
+        const cardStage    = document.getElementById('card-stage');
         const displayTitle = document.getElementById('display-title');
-        
-        const forceValue = document.getElementById('force-value');
-        const forceSuit = document.getElementById('force-suit');
+        const forceValue   = document.getElementById('force-value');
+        const forceSuit    = document.getElementById('force-suit');
 
-        // Global background preloading array pipeline initialization
-        const preloadedImages = [];
-        function preloadImages() {
+        // ── Image cache ───────────────────────────────────────────
+        //
+        // Storing Image objects by key (e.g. "JS", "QH") in a plain
+        // object prevents the browser from garbage-collecting them
+        // after the initial preload, so every tap after the first
+        // renders from memory — no network round-trips, no flash.
+        //
+        const imgCache = {};
+
+        function preloadAll() {
             values.forEach(v => {
                 suits.forEach(s => {
+                    const key = `${v}${s.id}`;
                     const img = new Image();
-                    img.src = `${v}${s.id}.svg`;
-                    preloadedImages.push(img);
+                    img.src   = `${key}.svg`;
+                    imgCache[key] = img;   // hold the reference
                 });
             });
         }
-        preloadImages();
+        preloadAll();
 
-        gearTrigger.addEventListener('click', (e) => {
+        // ── Helpers ───────────────────────────────────────────────
+        function isCached(key) {
+            const img = imgCache[key];
+            return img && img.complete && img.naturalWidth > 0;
+        }
+
+        // ── Core render (called once image is confirmed ready) ─────
+        function renderCard(val, suitObj) {
+            const key = `${val}${suitObj.id}`;
+
+            // Exit the old card first
+            if (currentCardEl) {
+                const old = currentCardEl;
+                old.classList.remove('entering');
+                old.classList.add('leaving');
+                // Remove from DOM after exit animation finishes (220ms)
+                setTimeout(() => {
+                    if (old.parentNode) old.parentNode.removeChild(old);
+                }, 220);
+            }
+
+            // Build the new card using an <img> tag
+            // — This is the key change for quality + filling:
+            //   <img> uses the browser's native SVG rendering pipeline,
+            //   which is sharper and more consistent than background-image.
+            const card = document.createElement('div');
+            card.className = 'playing-card entering';
+
+            const img = document.createElement('img');
+            img.className  = 'card-img';
+            img.draggable  = false;
+            img.src        = `${key}.svg`;
+
+            card.appendChild(img);
+            cardStage.appendChild(card);
+            currentCardEl = card;
+
+            // Update the title label
+            displayTitle.classList.remove('visible');
+            setTimeout(() => {
+                displayTitle.textContent = `${LABELS[val] || val} of ${suitObj.name}`;
+                displayTitle.style.color = suitObj.color;
+                displayTitle.classList.add('visible');
+            }, 60);
+        }
+
+        // ── Deal logic ────────────────────────────────────────────
+        //
+        // If the image is already in the browser cache (after preload
+        // or a previous deal), renderCard fires synchronously — no delay.
+        // If not yet loaded (very first cold load), we wait for onload
+        // before animating in so the card never flies in blank.
+        //
+        function dealCard(val, suitObj) {
+            const key = `${val}${suitObj.id}`;
+
+            if (isCached(key)) {
+                // Already in memory — instant render
+                renderCard(val, suitObj);
+            } else {
+                // Wait for image, then render
+                const loader = new Image();
+                loader.onload = () => {
+                    imgCache[key] = loader;
+                    renderCard(val, suitObj);
+                };
+                loader.onerror = () => renderCard(val, suitObj); // graceful fallback
+                loader.src = `${key}.svg`;
+            }
+        }
+
+        // ── Settings panel ────────────────────────────────────────
+        gearTrigger.addEventListener('click', e => {
             e.stopPropagation();
-            setupPanel.style.display = (setupPanel.style.display === 'block') ? 'none' : 'block';
+            setupPanel.style.display =
+                setupPanel.style.display === 'block' ? 'none' : 'block';
         });
+        document.body.addEventListener('click', () => {
+            setupPanel.style.display = 'none';
+        });
+        setupPanel.addEventListener('click', e => e.stopPropagation());
 
-        document.body.addEventListener('click', () => setupPanel.style.display = 'none');
-        setupPanel.addEventListener('click', (e) => e.stopPropagation());
-
-        stealthArm.addEventListener('click', (e) => {
+        // ── Stealth arm (tap the count to prime force card) ───────
+        stealthArm.addEventListener('click', e => {
             e.stopPropagation();
             isArmed = !isArmed;
             statusBadge.textContent = isArmed ? 'NEXT SELECTION FORCED' : 'RANDOM SELECTION';
-            statusBadge.className = isArmed ? 'status-badge status-armed' : 'status-badge status-idle';
+            statusBadge.className   = isArmed
+                ? 'status-badge status-armed'
+                : 'status-badge status-idle';
         });
 
+        // ── Main tap ──────────────────────────────────────────────
         bodyTrigger.addEventListener('click', () => {
-            if(promptText) promptText.style.display = 'none';
-            
+            if (promptText) promptText.style.display = 'none';
+
             if (runningCount > 1) {
                 runningCount--;
                 countNum.textContent = runningCount;
             }
 
-            let val = '';
-            let suitObj = null;
+            let val, suitObj;
 
             if (isArmed) {
-                val = forceValue.value;
+                val     = forceValue.value;
                 suitObj = suits.find(s => s.symbol === forceSuit.value);
                 isArmed = false;
                 statusBadge.textContent = 'RANDOM SELECTION';
-                statusBadge.className = 'status-badge status-idle';
+                statusBadge.className   = 'status-badge status-idle';
             } else {
-                val = values[Math.floor(Math.random() * values.length)];
+                val     = values[Math.floor(Math.random() * values.length)];
                 suitObj = suits[Math.floor(Math.random() * suits.length)];
             }
 
-            // 1. Fire the outbound slide animation rule on the old element card
-            if (currentCardElement) {
-                const oldCard = currentCardElement;
-                oldCard.classList.remove('entering');
-                oldCard.classList.add('leaving');
-                
-                // Clear out DOM memory stack leak paths cleanly after exit animation ends
-                setTimeout(() => {
-                    if (oldCard.parentNode) {
-                        oldCard.parentNode.removeChild(oldCard);
-                    }
-                }, 280); 
-            }
-
-            // 2. Generate new clean presentation element node layout
-            const newCard = document.createElement('div');
-            newCard.className = 'playing-card entering';
-            
-            // Fixed CSS String Assignment
-            const imageFilename = `${val}${suitObj.id}.svg`;
-            newCard.style.backgroundImage = `url('${imageFilename}')`;
-
-            // 3. Inject new layout on the active page tree stage view
-            cardStage.appendChild(newCard);
-            currentCardElement = newCard;
-
-            displayTitle.classList.remove('visible');
-            setTimeout(() => {
-                displayTitle.textContent = `${val === 'A' ? 'Ace' : val === 'J' ? 'Jack' : val === 'Q' ? 'Queen' : val === 'K' ? 'King' : val} of ${suitObj.name}`;
-                displayTitle.style.color = suitObj.color;
-                displayTitle.classList.add('visible');
-            }, 60);
+            dealCard(val, suitObj);
         });
     </script>
 </body>
