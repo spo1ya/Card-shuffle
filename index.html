@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #0d0d0d;
+            background-color: #0b0b0b;
             color: #ffffff;
             display: flex;
             flex-direction: column;
@@ -20,7 +20,7 @@
             overflow: hidden;
         }
 
-        /* Top Bar Screen Headers */
+        /* Top Bar Label */
         .top-bar {
             width: 100%;
             max-width: 360px;
@@ -34,7 +34,6 @@
         }
 
         .card-title {
-            color: #e53935;
             font-size: 24px;
             font-weight: bold;
             text-align: center;
@@ -46,7 +45,7 @@
             opacity: 1;
         }
 
-        /* Completely Hidden Hitbox for Configuration Drawer */
+        /* Invisible Config Menu Trigger Hitbox */
         .secret-gear {
             position: absolute;
             right: 20px;
@@ -57,7 +56,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Stealth Control Config Panel */
+        /* Stealth Settings Panel Drawer */
         #setup-panel {
             display: none;
             background-color: #161616;
@@ -73,7 +72,7 @@
         }
         #setup-panel h3 {
             margin: 0 0 12px 0;
-            color: #e53935;
+            color: #dc2626;
             font-size: 14px;
             text-align: center;
             text-transform: uppercase;
@@ -104,9 +103,9 @@
             font-size: 11px;
         }
         .status-idle { background-color: #262626; color: #777; }
-        .status-armed { background-color: #e53935; color: #fff; }
+        .status-armed { background-color: #dc2626; color: #fff; }
 
-        /* Card Presentation Frame Sandbox */
+        /* Card Container Canvas Workspace */
         .card-container {
             flex: 1;
             display: flex;
@@ -116,16 +115,16 @@
             position: relative;
         }
 
-        /* Realistic Multi-layered Stacking Card Shadows */
+        /* Stacking Card Shadows mimicking exact base depth values */
         .deck-pile-shadow {
             position: absolute;
             background-color: #ffffff;
-            border-radius: 16px;
-            width: 74vw;
-            height: 106vw;
-            max-width: 275px;
-            max-height: 395px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            border-radius: 10px;
+            width: 71vw;
+            height: 101vw;
+            max-width: 260px;
+            max-height: 369px;
+            box-shadow: 0px 4px 8px #00000080;
             transform: rotate(-2.5deg) translate(-2px, 3px);
             opacity: 0.18;
             pointer-events: none;
@@ -135,20 +134,20 @@
             opacity: 0.1;
         }
 
-        /* Figma Inspired Premium Playing Card Structure */
+        /* Premium Figma-Dimensioned Playing Card Shell */
         .playing-card {
-            background-color: #ffffff;
-            border-radius: 16px;
-            width: 74vw;
-            height: 106vw;
-            max-width: 275px;
-            max-height: 395px;
-            box-shadow: 0 14px 32px rgba(0,0,0,0.45);
+            background: #FFFFFF;
+            box-shadow: 0px 4px 8px #9DB3CE;
+            border-radius: 10px;
+            width: 71vw;
+            height: 101vw;
+            max-width: 260px;
+            max-height: 369px;
             position: absolute;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 12px 14px;
+            padding: 4% 5%; /* Mathematically tracked to match Component 2 boundaries */
             box-sizing: border-box;
             user-select: none;
             -webkit-user-select: none;
@@ -156,23 +155,23 @@
             transform: translateY(40px);
         }
 
-        /* Native Slide Action Animation Engine */
+        /* Clean Native Fluid Dealing Velocity */
         .playing-card.dealt {
-            animation: figmaSlideCardUp 0.26s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+            animation: figmaSlideCardUp 0.25s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
         @keyframes figmaSlideCardUp {
             0% {
-                transform: translateY(35px) scale(0.97) rotate(0.5deg);
+                transform: translateY(30px) scale(0.97) rotate(0.5deg);
                 opacity: 0;
             }
             100% {
-                transform: translateY(0) scale(1) rotate(-1.2deg);
+                transform: translateY(0) scale(1) rotate(-1.5deg);
                 opacity: 1;
             }
         }
 
-        /* App Onboarding Prompt Label */
+        /* Start Prompt Label */
         .initial-prompt {
             position: absolute;
             font-size: 18px;
@@ -182,25 +181,32 @@
             text-align: center;
         }
 
-        /* Classic Minimal Index Corners Layout from Figma design */
+        /* Exact Figma Index Corner Structuring Data */
         .card-corner {
             display: flex;
             flex-direction: column;
             align-items: center;
-            line-height: 0.85;
-            font-weight: 600;
-            font-size: 30px;
-            letter-spacing: -0.5px;
+            justify-content: flex-start;
+            width: 14%;
+            height: 25%;
+            font-family: 'SF Compact Rounded', -apple-system, sans-serif;
+            font-style: normal;
+            font-weight: 400;
+            font-size: 36px;
+            line-height: 1;
+            text-align: center;
+            letter-spacing: -0.05em;
         }
         .card-corner.bottom {
-            transform: rotate(180deg);
+            transform: rotate(-180deg);
         }
         .card-corner-suit {
-            font-size: 18px;
-            margin-top: 3px;
+            font-size: 20px;
+            margin-top: 1px;
+            line-height: 1;
         }
 
-        /* Geometrically Center Pip Grid Distribution Box */
+        /* Central Canvas Frame Box for Geometric Grid Alignments */
         .center-pips {
             flex: 1;
             width: 100%;
@@ -208,17 +214,16 @@
             max-height: 230px;
             position: relative;
             box-sizing: border-box;
-            padding: 0 16px;
         }
 
-        /* Coordinate Row Positions for Exact Card Pip Scaling matrices */
+        /* Precise Mathematical Coordinates for Vector Map Pips Grid */
         .pip-row {
             display: flex;
             justify-content: space-between;
             position: absolute;
-            left: 20px;
-            right: 20px;
-            font-size: 34px;
+            left: 12%;
+            right: 12%;
+            font-size: 32px;
         }
         .pip-center-col {
             position: absolute;
@@ -227,17 +232,17 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            font-size: 34px;
+            font-size: 32px;
         }
 
-        /* Figma Symmetrical Symmetrical Dual Court Box Framework Layout */
+        /* Court Royal Box Minimalist Symmetrical Split Layout Frame */
         .figma-court-box {
-            width: 84%;
-            height: 86%;
-            border: 1px solid #dcdcdc;
+            width: 82%;
+            height: 88%;
+            border: 2px solid currentColor;
             position: absolute;
-            top: 7%;
-            left: 8%;
+            top: 6%;
+            left: 9%;
             border-radius: 4px;
             background-color: #faf9f6;
             box-sizing: border-box;
@@ -253,28 +258,27 @@
             justify-content: space-between;
             align-items: flex-start;
             height: 50%;
-            font-size: 44px;
-            font-weight: bold;
-            color: rgba(0,0,0,0.85);
+            font-size: 38px;
+            color: currentColor;
         }
         .court-half.inverted {
             transform: rotate(180deg);
             border-top: 1px dashed rgba(0,0,0,0.08);
         }
         .court-royal-character {
-            font-size: 26px;
+            font-size: 22px;
             font-family: serif;
             font-weight: 900;
             border: 1.5px solid currentColor;
-            width: 32px;
-            height: 32px;
+            width: 26px;
+            height: 26px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
         }
 
-        /* Screen Bottom Footers */
+        /* Screen Bottom Actions Footers */
         .bottom-bar {
             width: 100%;
             max-width: 360px;
@@ -316,7 +320,6 @@
         <div class="secret-gear" id="gear-trigger"></div>
     </div>
 
-    <!-- Hidden Settings Drawer UI -->
     <div id="setup-panel">
         <h3>Trick Configuration</h3>
         <div class="setup-group">
@@ -344,7 +347,6 @@
         </div>
     </div>
 
-    <!-- Main Presentation Card Canvas Workspace -->
     <div class="card-container">
         <div class="initial-prompt" id="prompt-text">Tap anywhere to deal.</div>
         
@@ -354,14 +356,14 @@
         <div class="playing-card" id="active-card">
             <div class="card-corner top">
                 <div class="val-idx"></div>
-                <div class="suit-idx"></div>
+                <div class="card-corner-suit"></div>
             </div>
             
             <div class="center-pips" id="pips-matrix"></div>
             
             <div class="card-corner bottom">
                 <div class="val-idx"></div>
-                <div class="suit-idx"></div>
+                <div class="card-corner-suit"></div>
             </div>
         </div>
     </div>
@@ -377,10 +379,10 @@
     <script>
         const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
         const suits = [
-            { symbol: '♠', name: 'Spades', color: '#1a1a1a' },
-            { symbol: '♥', name: 'Hearts', color: '#dc2626' },
-            { symbol: '♦', name: 'Diamonds', color: '#dc2626' },
-            { symbol: '♣', name: 'Clubs', color: '#1a1a1a' }
+            { symbol: '♠', name: 'Spades', color: '#211C1D' }, // Figma exact black value
+            { symbol: '♥', name: 'Hearts', color: '#BC1E24' },  // Figma exact red value
+            { symbol: '♦', name: 'Diamonds', color: '#BC1E24' },// Figma exact red value
+            { symbol: '♣', name: 'Clubs', color: '#211C1D' }   // Figma exact black value
         ];
 
         let isArmed = false;
@@ -403,7 +405,7 @@
         const forceValue = document.getElementById('force-value');
         const forceSuit = document.getElementById('force-suit');
 
-        // Toggle configuration menu via top invisible panel zone
+        // Secret tap setup panel view toggles via hidden navbar node hitboxes
         gearTrigger.addEventListener('click', (e) => {
             e.stopPropagation();
             setupPanel.style.display = (setupPanel.style.display === 'block') ? 'none' : 'block';
@@ -412,7 +414,7 @@
         document.body.addEventListener('click', () => setupPanel.style.display = 'none');
         setupPanel.addEventListener('click', (e) => e.stopPropagation());
 
-        // Stealth arm setup inside the footer statistics counter
+        // Stealth arm force matrix engine toggle via footer count item
         stealthArm.addEventListener('click', (e) => {
             e.stopPropagation();
             isArmed = !isArmed;
@@ -420,7 +422,7 @@
             statusBadge.className = isArmed ? 'status-badge status-armed' : 'status-badge status-idle';
         });
 
-        // Deal Event Physics Execution Triggers
+        // Click Deal Engine Action map loop executions
         bodyTrigger.addEventListener('click', () => {
             if(promptText) promptText.style.display = 'none';
             
@@ -443,7 +445,7 @@
                 suitObj = suits[Math.floor(Math.random() * suits.length)];
             }
 
-            // Fire reset slide up layouts animation sequences
+            // Fire reset slide up layouts animation sequence mechanics
             activeCard.classList.remove('dealt');
             void activeCard.offsetWidth; 
             activeCard.classList.add('dealt');
@@ -451,14 +453,11 @@
             shadow1.style.display = 'block';
             shadow2.style.display = 'block';
 
-            document.querySelectorAll('.val-idx').forEach(el => el.textContent = val);
-            document.querySelectorAll('.suit-idx').forEach(el => {
-                el.textContent = suitObj.symbol;
-                el.style.color = suitObj.color;
-            });
+            document.querySelectorAll('.val-idx').forEach(el => el.textContent = val === '10' ? '10' : val);
+            document.querySelectorAll('.card-corner-suit').forEach(el => el.textContent = suitObj.symbol);
             document.querySelectorAll('.card-corner').forEach(el => el.style.color = suitObj.color);
 
-            // Execute Figma Inspired Design Render Compilation Engine
+            // Execute exact Figma Specification Vector Matrix layout grid compiler
             buildFigmaPipsMatrix(val, suitObj);
 
             displayTitle.classList.remove('visible');
@@ -469,97 +468,77 @@
             }, 60);
         });
 
-        // Geometric Matrix Vector Compiler built around standard layouts blueprint specs
+        // Exact Figma Pixel Coordinate Vector distribution engines mapping loops
         function buildFigmaPipsMatrix(val, suit) {
             pipsMatrix.innerHTML = '';
             const sym = suit.symbol;
 
-            // Premium Symmetrical Court Split View Frame Architecture from the Figma Design Blueprint
+            // Symmetrical Royal Court Box Layout Frame structure derived directly from file data
             if (['J', 'Q', 'K'].includes(val)) {
                 pipsMatrix.innerHTML = `
-                    <div class="figma-court-box" style="color: ${suit.color}; border-color: ${suit.color}33">
+                    <div class="figma-court-box" style="color: ${suit.color}">
                         <div class="court-half">
-                            <div class="court-royal-character">${val}</div>
+                            <div class="court-royal-character" style="border-color: ${suit.color}">${val}</div>
                             <div>${sym}</div>
                         </div>
                         <div class="court-half inverted">
-                            <div class="court-royal-character">${val}</div>
+                            <div class="court-royal-character" style="border-color: ${suit.color}">${val}</div>
                             <div>${sym}</div>
                         </div>
                     </div>`;
                 return;
             }
 
+            // Ace: top 119px (approx 36% relative offset canvas point matching data)
             if (val === 'A') {
-                pipsMatrix.innerHTML = `<div class="pip-center-col" style="top:36%; font-size:68px;">${sym}</div>`;
+                pipsMatrix.innerHTML = `<div class="pip-center-col" style="top:36%; font-size:52px;">${sym}</div>`;
                 return;
             }
 
+            // 2: top 23px, bottom 215px (matrix transformation inverted mapping coordinates rules)
             if (val === '2') {
                 pipsMatrix.innerHTML = `
-                    <div class="pip-center-col" style="height:74%; top:13%; justify-content:space-between;">
+                    <div class="pip-center-col" style="height:76%; top:10%; justify-content:space-between;">
                         <div>${sym}</div>
                         <div style="transform:rotate(180deg)">${sym}</div>
                     </div>`;
             }
+
+            // 3: top 23px, middle 119px, bottom 215px
             if (val === '3') {
                 pipsMatrix.innerHTML = `
-                    <div class="pip-center-col" style="height:74%; top:13%; justify-content:space-between;">
+                    <div class="pip-center-col" style="height:76%; top:10%; justify-content:space-between;">
                         <div>${sym}</div>
                         <div>${sym}</div>
                         <div style="transform:rotate(180deg)">${sym}</div>
                     </div>`;
             }
+
+            // 4: Group 5 side columns (offset left/right -44px / +44px top 23px, bottom 215px)
             if (val === '4') {
                 pipsMatrix.innerHTML = `
-                    <div class="pip-row" style="top:13%;"><div>${sym}</div><div>${sym}</div></div>
-                    <div class="pip-row" style="bottom:13%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
+                    <div class="pip-row" style="top:10%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-row" style="bottom:10%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
             }
+
+            // 5: 4 corners layout data + perfect centered element calc(50% - 50px/2)
             if (val === '5') {
                 pipsMatrix.innerHTML = `
-                    <div class="pip-row" style="top:13%;"><div>${sym}</div><div>${sym}</div></div>
-                    <div class="pip-center-col" style="top:41%;"><div>${sym}</div></div>
-                    <div class="pip-row" style="bottom:13%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
+                    <div class="pip-row" style="top:10%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-center-col" style="top:40%;"><div>${sym}</div></div>
+                    <div class="pip-row" style="bottom:10%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
             }
+
+            // 6: 3 rows of double horizontal arrays points
             if (val === '6') {
                 pipsMatrix.innerHTML = `
-                    <div class="pip-row" style="top:13%;"><div>${sym}</div><div>${sym}</div></div>
-                    <div class="pip-row" style="top:41%;"><div>${sym}</div><div>${sym}</div></div>
-                    <div class="pip-row" style="bottom:13%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
+                    <div class="pip-row" style="top:10%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-row" style="top:40%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-row" style="bottom:10%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
             }
+
+            // 7: 6 layout specs + 1 custom vertically offset row element top: calc(50% - 50px/2 - 48px)
             if (val === '7') {
                 pipsMatrix.innerHTML = `
-                    <div class="pip-row" style="top:13%;"><div>${sym}</div><div>${sym}</div></div>
-                    <div class="pip-center-col" style="top:27%;"><div>${sym}</div></div>
-                    <div class="pip-row" style="top:41%;"><div>${sym}</div><div>${sym}</div></div>
-                    <div class="pip-row" style="bottom:13%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
-            }
-            if (val === '8') {
-                pipsMatrix.innerHTML = `
-                    <div class="pip-row" style="top:13%;"><div>${sym}</div><div>${sym}</div></div>
-                    <div class="pip-center-col" style="top:27%;"><div>${sym}</div></div>
-                    <div class="pip-row" style="top:41%;"><div>${sym}</div><div>${sym}</div></div>
-                    <div class="pip-center-col" style="bottom:27%; transform:translateX(-50%) rotate(180deg);"><div>${sym}</div></div>
-                    <div class="pip-row" style="bottom:13%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
-            }
-            if (val === '9') {
-                pipsMatrix.innerHTML = `
                     <div class="pip-row" style="top:10%;"><div>${sym}</div><div>${sym}</div></div>
-                    <div class="pip-row" style="top:31%;"><div>${sym}</div><div>${sym}</div></div>
-                    <div class="pip-center-col" style="top:41%;"><div>${sym}</div></div>
-                    <div class="pip-row" style="bottom:31%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>
-                    <div class="pip-row" style="bottom:10%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
-            }
-            if (val === '10') {
-                pipsMatrix.innerHTML = `
-                    <div class="pip-row" style="top:10%;"><div>${sym}</div><div>${sym}</div></div>
-                    <div class="pip-center-col" style="top:22%;"><div>${sym}</div></div>
-                    <div class="pip-row" style="top:34%;"><div>${sym}</div><div>${sym}</div></div>
-                    <div class="pip-row" style="bottom:34%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>
-                    <div class="pip-center-col" style="bottom:22%; transform:translateX(-50%) rotate(180deg);"><div>${sym}</div></div>
-                    <div class="pip-row" style="bottom:10%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
-            }
-        }
-    </script>
-</body>
-</html>
+                    <div class="pip-center-col" style="top:25%;"><div>${sym}</div></div>
