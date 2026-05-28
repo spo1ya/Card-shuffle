@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=none">
     <title>Card Generator</title>
     <style>
+        /* [INSERT THE CSS FROM ABOVE HERE, Plus your top-bar/bottom-bar CSS] */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: #0b0b0b;
@@ -20,56 +21,212 @@
             overflow: hidden;
         }
 
-        /* Top Bar Label */
-        .top-bar {
-            width: 100%;
-            max-width: 360px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            height: 45px;
-            margin-top: 10px;
-            z-index: 10;
-        }
+        .top-bar { width: 100%; max-width: 360px; display: flex; justify-content: center; align-items: center; position: relative; height: 45px; margin-top: 10px; z-index: 10; }
+        .card-title { font-size: 24px; font-weight: bold; text-align: center; opacity: 0; transition: opacity 0.2s ease-out; letter-spacing: -0.3px; }
+        .card-title.visible { opacity: 1; }
+        .secret-gear { position: absolute; right: 20px; width: 45px; height: 45px; background-color: transparent; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 
-        .card-title {
-            font-size: 24px;
-            font-weight: bold;
-            text-align: center;
-            opacity: 0;
-            transition: opacity 0.2s ease-out;
-            letter-spacing: -0.3px;
-        }
-        .card-title.visible {
-            opacity: 1;
-        }
+        #setup-panel { display: none; background-color: #161616; border: 1px solid #262626; padding: 16px; border-radius: 14px; width: 320px; box-sizing: border-box; position: absolute; top: 60px; z-index: 100; box-shadow: 0 12px 36px rgba(0,0,0,0.75); }
+        #setup-panel h3 { margin: 0 0 12px 0; color: #dc2626; font-size: 14px; text-align: center; text-transform: uppercase; letter-spacing: 0.8px; }
+        .setup-group { margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; color: #aaa; font-size: 14px; }
+        .setup-group select { padding: 6px 10px; background-color: #222; color: #fff; border: 1px solid #333; border-radius: 8px; width: 125px; font-size: 14px; outline: none; }
+        .status-badge { font-weight: bold; padding: 4px 10px; border-radius: 6px; font-size: 11px; }
+        .status-idle { background-color: #262626; color: #777; }
+        .status-armed { background-color: #dc2626; color: #fff; }
 
-        /* Invisible Config Menu Trigger Hitbox */
-        .secret-gear {
-            position: absolute;
-            right: 20px;
-            width: 45px;
-            height: 45px;
-            background-color: transparent;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
+        .card-container { flex: 1; display: flex; justify-content: center; align-items: center; width: 100%; position: relative; overflow: hidden; }
 
-        /* Stealth Settings Panel Drawer */
-        #setup-panel {
-            display: none;
-            background-color: #161616;
-            border: 1px solid #262626;
-            padding: 16px;
+        /* The base shell for ALL generated cards */
+        .playing-card {
+            background: transparent; 
             border-radius: 14px;
-            width: 320px;
-            box-sizing: border-box;
+            width: 71vw;
+            aspect-ratio: 203 / 288;
+            max-width: 260px;
+            max-height: 369px;
             position: absolute;
-            top: 60px;
-            z-index: 100;
-            box-shadow: 0 12px 36px rgba(0,0,0,0.75);
+            user-select: none;
+            -webkit-user-select: none;
+            background-size: contain; 
+            background-repeat: no-repeat;
+            background-position: center;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.2); 
+            opacity: 0;
+            transform: translateY(100px) scale(0.9);
+            z-index: 20;
         }
+
+        .playing-card.entering { animation: cardEnter 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .playing-card.leaving { animation: cardLeave 0.3s ease-in forwards; z-index: 10; }
+
+        @keyframes cardEnter {
+            0% { transform: translateY(80px) scale(0.95); opacity: 0; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        @keyframes cardLeave {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-80px) scale(0.95); opacity: 0; }
+        }
+
+        .initial-prompt { position: absolute; font-size: 18px; color: #3e3e3e; font-weight: 500; pointer-events: none; text-align: center; z-index: 30; }
+
+        .bottom-bar { width: 100%; max-width: 360px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px 10px 20px; box-sizing: border-box; color: #3a3a3a; font-size: 13px; z-index: 10; }
+        .cards-left { display: flex; flex-direction: column; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+        .cards-count { color: #555555; font-size: 15px; font-weight: 500; }
+        .history-trigger { border: 1px solid #181818; background-color: transparent; padding: 6px 12px; border-radius: 8px; color: #bc2825; font-size: 13px; font-weight: 600; }
+    </style>
+</head>
+<body id="body-trigger">
+
+    <div class="top-bar">
+        <div class="card-title" id="display-title"></div>
+        <div class="secret-gear" id="gear-trigger"></div>
+    </div>
+
+    <div id="setup-panel">
+        <h3>Trick Configuration</h3>
+        <div class="setup-group">
+            <label for="force-value">Force Value:</label>
+            <select id="force-value">
+                <option value="A">Ace</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="J" selected>Jack</option><option value="Q">Queen</option><option value="K">King</option>
+            </select>
+        </div>
+        <div class="setup-group">
+            <label for="force-suit">Force Suit:</label>
+            <select id="force-suit">
+                <option value="♠">Spades</option><option value="♥">Hearts</option><option value="♦" selected>Diamonds</option><option value="♣">Clubs</option>
+            </select>
+        </div>
+        <div class="setup-group">
+            <span>Status:</span>
+            <span id="status-badge" class="status-badge status-idle">RANDOM SELECTION</span>
+        </div>
+    </div>
+
+    <div class="card-container" id="card-stage">
+        <div class="initial-prompt" id="prompt-text">Tap anywhere to deal.</div>
+    </div>
+
+    <div class="bottom-bar">
+        <div class="cards-left" id="stealth-arm">
+            <span class="cards-count" id="count-num">108</span>
+            <span>Cards remaining</span>
+        </div>
+        <button class="history-trigger" onclick="return false;">Card History</button>
+    </div>
+
+    <script>
+        const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+        const suits = [
+            { symbol: '♠', id: 'S', name: 'Spades', color: '#211C1D' }, 
+            { symbol: '♥', id: 'H', name: 'Hearts', color: '#BC1E24' },  
+            { symbol: '♦', id: 'D', name: 'Diamonds', color: '#BC1E24' },
+            { symbol: '♣', id: 'C', name: 'Clubs', color: '#211C1D' }   
+        ];
+
+        let isArmed = false;
+        let runningCount = 108;
+        let currentCardElement = null; // Keep track of the card currently on screen
+
+        const bodyTrigger = document.getElementById('body-trigger');
+        const gearTrigger = document.getElementById('gear-trigger');
+        const setupPanel = document.getElementById('setup-panel');
+        const stealthArm = document.getElementById('stealth-arm');
+        const statusBadge = document.getElementById('status-badge');
+        const countNum = document.getElementById('count-num');
+        const promptText = document.getElementById('prompt-text');
+        
+        const cardStage = document.getElementById('card-stage'); // The arena
+        const displayTitle = document.getElementById('display-title');
+        
+        const forceValue = document.getElementById('force-value');
+        const forceSuit = document.getElementById('force-suit');
+
+        // Preload logic (Crucial for eliminating the white flash)
+        const preloadedImages = [];
+        function preloadImages() {
+            values.forEach(v => {
+                suits.forEach(s => {
+                    const img = new Image();
+                    img.src = `${v}${s.id}.svg`;
+                    preloadedImages.push(img);
+                });
+            });
+        }
+        preloadImages();
+
+        // UI Interactions
+        gearTrigger.addEventListener('click', (e) => { e.stopPropagation(); setupPanel.style.display = (setupPanel.style.display === 'block') ? 'none' : 'block'; });
+        document.body.addEventListener('click', () => setupPanel.style.display = 'none');
+        setupPanel.addEventListener('click', (e) => e.stopPropagation());
+
+        stealthArm.addEventListener('click', (e) => {
+            e.stopPropagation();
+            isArmed = !isArmed;
+            statusBadge.textContent = isArmed ? 'NEXT SELECTION FORCED' : 'RANDOM SELECTION';
+            statusBadge.className = isArmed ? 'status-badge status-armed' : 'status-badge status-idle';
+        });
+
+        // The Core Deal Logic
+        bodyTrigger.addEventListener('click', () => {
+            if(promptText) promptText.style.display = 'none';
+            
+            if (runningCount > 1) {
+                runningCount--;
+                countNum.textContent = runningCount;
+            }
+
+            let val = '';
+            let suitObj = null;
+
+            if (isArmed) {
+                val = forceValue.value;
+                suitObj = suits.find(s => s.symbol === forceSuit.value);
+                isArmed = false;
+                statusBadge.textContent = 'RANDOM SELECTION';
+                statusBadge.className = 'status-badge status-idle';
+            } else {
+                val = values[Math.floor(Math.random() * values.length)];
+                suitObj = suits[Math.floor(Math.random() * suits.length)];
+            }
+
+            // 1. Animate the OLD card out (if it exists)
+            if (currentCardElement) {
+                const oldCard = currentCardElement;
+                oldCard.classList.remove('entering');
+                oldCard.classList.add('leaving');
+                // Remove it from the DOM after animation finishes (0.3s)
+                setTimeout(() => {
+                    if (oldCard.parentNode) {
+                        oldCard.parentNode.removeChild(oldCard);
+                    }
+                }, 300); 
+            }
+
+            // 2. Create the NEW card element
+            const newCard = document.createElement('div');
+            newCard.className = 'playing-card entering';
+            const imageFilename = `${val}${suitObj.id}.svg`;
+            newCard.style.backgroundImage = `url('${imageFilename}')`;
+
+            // 3. Add it to the stage
+            cardStage.appendChild(newCard);
+            
+            // 4. Update the tracker
+            currentCardElement = newCard;
+
+            // Update Title
+            displayTitle.classList.remove('visible');
+            setTimeout(() => {
+                displayTitle.textContent = `${val === 'A' ? 'Ace' : val === 'J' ? 'Jack' : val === 'Q' ? 'Queen' : val === 'K' ? 'King' : val} of ${suitObj.name}`;
+                displayTitle.style.color = suitObj.color;
+                displayTitle.classList.add('visible');
+            }, 60);
+        });
+    </script>
+</body>
+</html>        }
         #setup-panel h3 {
             margin: 0 0 12px 0;
             color: #dc2626;
