@@ -115,6 +115,304 @@
             position: relative;
         }
 
+        /* Restored Original Responsive Deck Shadows */
+        .deck-pile-shadow {
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 10px;
+            width: 71vw;
+            height: 101vw;
+            max-width: 260px;
+            max-height: 369px;
+            box-shadow: 0px 4px 8px #00000080;
+            transform: rotate(-2.5deg) translate(-2px, 3px);
+            opacity: 0.18;
+            pointer-events: none;
+        }
+        .deck-pile-shadow.two {
+            transform: rotate(2deg) translate(2px, -1px);
+            opacity: 0.1;
+        }
+
+        /* Restored Original Responsive Playing Card Shell */
+        .playing-card {
+            background: #FFFFFF;
+            box-shadow: 0px 4px 8px #9DB3CE;
+            border-radius: 11px;
+            width: 71vw;
+            height: 101vw;
+            max-width: 260px;
+            max-height: 369px;
+            position: absolute;
+            user-select: none;
+            -webkit-user-select: none;
+            opacity: 0;
+            transform: translateY(40px);
+            overflow: hidden; /* Crucial: Clips your square PNGs to match the rounded card corners */
+        }
+
+        /* Clean Native Fluid Dealing Velocity */
+        .playing-card.dealt {
+            animation: figmaSlideCardUp 0.22s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes figmaSlideCardUp {
+            0% {
+                transform: translateY(25px) scale(0.97) rotate(1deg);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0) scale(1) rotate(-1deg);
+                opacity: 1;
+            }
+        }
+
+        /* Start Prompt Label */
+        .initial-prompt {
+            position: absolute;
+            font-size: 18px;
+            color: #3e3e3e;
+            font-weight: 500;
+            pointer-events: none;
+            text-align: center;
+            z-index: 20;
+        }
+
+        /* Image Display Window filling entire card space proportionally */
+        .card-image-canvas {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            background-size: 100% 100%; /* Forces the image to stretch precisely to the card edges */
+            background-repeat: no-repeat;
+            background-position: center;
+            box-sizing: border-box;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
+
+        /* Screen Bottom Actions Footers */
+        .bottom-bar {
+            width: 100%;
+            max-width: 360px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px 10px 20px;
+            box-sizing: border-box;
+            color: #3a3a3a;
+            font-size: 13px;
+            z-index: 10;
+        }
+        .cards-left {
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .cards-count {
+            color: #555555;
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .history-trigger {
+            border: 1px solid #181818;
+            background-color: transparent;
+            padding: 6px 12px;
+            border-radius: 8px;
+            color: #bc2825;
+            font-size: 13px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body id="body-trigger">
+
+    <div class="top-bar">
+        <div class="card-title" id="display-title"></div>
+        <div class="secret-gear" id="gear-trigger"></div>
+    </div>
+
+    <div id="setup-panel">
+        <h3>Trick Configuration</h3>
+        <div class="setup-group">
+            <label for="force-value">Force Value:</label>
+            <select id="force-value">
+                <option value="A">Ace</option><option value="2">2</option>
+                <option value="3">3</option><option value="4">4</option>
+                <option value="5">5</option><option value="6">6</option>
+                <option value="7">7</option><option value="8">8</option>
+                <option value="9">9</option><option value="10">10</option>
+                <option value="J" selected>Jack</option><option value="Q">Queen</option>
+                <option value="K">King</option>
+            </select>
+        </div>
+        <div class="setup-group">
+            <label for="force-suit">Force Suit:</label>
+            <select id="force-suit">
+                <option value="♠">Spades</option><option value="♥">Hearts</option>
+                <option value="♦" selected>Diamonds</option><option value="♣">Clubs</option>
+            </select>
+        </div>
+        <div class="setup-group">
+            <span>Status:</span>
+            <span id="status-badge" class="status-badge status-idle">RANDOM SELECTION</span>
+        </div>
+    </div>
+
+    <div class="card-container">
+        <div class="initial-prompt" id="prompt-text">Tap anywhere to deal.</div>
+        
+        <div class="deck-pile-shadow" id="shadow-1" style="display: none;"></div>
+        <div class="deck-pile-shadow two" id="shadow-2" style="display: none;"></div>
+
+        <div class="playing-card" id="active-card">
+            <div id="card-image-display" class="card-image-canvas"></div>
+        </div>
+    </div>
+
+    <div class="bottom-bar">
+        <div class="cards-left" id="stealth-arm">
+            <span class="cards-count" id="count-num">108</span>
+            <span>Cards remaining</span>
+        </div>
+        <button class="history-trigger" onclick="return false;">Card History</button>
+    </div>
+
+    <script>
+        const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+        const suits = [
+            { symbol: '♠', id: 'S', name: 'Spades', color: '#211C1D' }, 
+            { symbol: '♥', id: 'H', name: 'Hearts', color: '#BC1E24' },  
+            { symbol: '♦', id: 'D', name: 'Diamonds', color: '#BC1E24' },
+            { symbol: '♣', id: 'C', name: 'Clubs', color: '#211C1D' }   
+        ];
+
+        let isArmed = false;
+        let runningCount = 108;
+
+        const bodyTrigger = document.getElementById('body-trigger');
+        const gearTrigger = document.getElementById('gear-trigger');
+        const setupPanel = document.getElementById('setup-panel');
+        const stealthArm = document.getElementById('stealth-arm');
+        const statusBadge = document.getElementById('status-badge');
+        const countNum = document.getElementById('count-num');
+        const promptText = document.getElementById('prompt-text');
+        
+        const activeCard = document.getElementById('active-card');
+        const displayTitle = document.getElementById('display-title');
+        const cardImageDisplay = document.getElementById('card-image-display');
+        const shadow1 = document.getElementById('shadow-1');
+        const shadow2 = document.getElementById('shadow-2');
+
+        const forceValue = document.getElementById('force-value');
+        const forceSuit = document.getElementById('force-suit');
+
+        gearTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            setupPanel.style.display = (setupPanel.style.display === 'block') ? 'none' : 'block';
+        });
+
+        document.body.addEventListener('click', () => setupPanel.style.display = 'none');
+        setupPanel.addEventListener('click', (e) => e.stopPropagation());
+
+        stealthArm.addEventListener('click', (e) => {
+            e.stopPropagation();
+            isArmed = !isArmed;
+            statusBadge.textContent = isArmed ? 'NEXT SELECTION FORCED' : 'RANDOM SELECTION';
+            statusBadge.className = isArmed ? 'status-badge status-armed' : 'status-badge status-idle';
+        });
+
+        bodyTrigger.addEventListener('click', () => {
+            if(promptText) promptText.style.display = 'none';
+            
+            if (runningCount > 1) {
+                runningCount--;
+                countNum.textContent = runningCount;
+            }
+
+            let val = '';
+            let suitObj = null;
+
+            if (isArmed) {
+                val = forceValue.value;
+                suitObj = suits.find(s => s.symbol === forceSuit.value);
+                isArmed = false;
+                statusBadge.textContent = 'RANDOM SELECTION';
+                statusBadge.className = 'status-badge status-idle';
+            } else {
+                val = values[Math.floor(Math.random() * values.length)];
+                suitObj = suits[Math.floor(Math.random() * suits.length)];
+            }
+
+            activeCard.classList.remove('dealt');
+            void activeCard.offsetWidth; 
+            activeCard.classList.add('dealt');
+
+            shadow1.style.display = 'block';
+            shadow2.style.display = 'block';
+
+            // IMPORTANT: Ensure your 52 PNG files are uploaded to the exact same folder on GitHub!
+            const imageFilename = `${val}${suitObj.id}.png`;
+            cardImageDisplay.style.backgroundImage = `url('${imageFilename}')`;
+
+            displayTitle.classList.remove('visible');
+            setTimeout(() => {
+                displayTitle.textContent = `${val === 'A' ? 'Ace' : val === 'J' ? 'Jack' : val === 'Q' ? 'Queen' : val === 'K' ? 'King' : val} of ${suitObj.name}`;
+                displayTitle.style.color = suitObj.color;
+                displayTitle.classList.add('visible');
+            }, 60);
+        });
+    </script>
+</body>
+</html>        }
+        #setup-panel h3 {
+            margin: 0 0 12px 0;
+            color: #dc2626;
+            font-size: 14px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .setup-group {
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #aaa;
+            font-size: 14px;
+        }
+        .setup-group select {
+            padding: 6px 10px;
+            background-color: #222;
+            color: #fff;
+            border: 1px solid #333;
+            border-radius: 8px;
+            width: 125px;
+            font-size: 14px;
+            outline: none;
+        }
+        .status-badge {
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+        }
+        .status-idle { background-color: #262626; color: #777; }
+        .status-armed { background-color: #dc2626; color: #fff; }
+
+        /* Card Container Canvas Workspace */
+        .card-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            position: relative;
+        }
+
         /* Stacking Card Shadows mimicking exact base depth values */
         .deck-pile-shadow {
             position: absolute;
