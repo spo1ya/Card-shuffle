@@ -2,158 +2,279 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Card Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=none">
+    <title>Card Generator</title>
     <style>
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: #f4f4f4;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #111111;
+            color: #ffffff;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             min-height: 100vh;
             margin: 0;
-            padding: 10px;
+            padding: 20px box-sizing;
+            box-sizing: border-box;
+            overflow: hidden;
         }
 
-        /* Hidden Magician Control Panel */
+        /* Top Bar Layout matching image_5.png */
+        .top-bar {
+            width: 100%;
+            max-width: 380px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            height: 50px;
+            margin-top: 10px;
+        }
+
+        .card-title {
+            color: #e53935;
+            font-size: 26px;
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 0.5px;
+            transition: opacity 0.2s;
+        }
+
+        /* Hidden trigger button disguised as a subtle icon layout item */
+        .secret-gear {
+            position: absolute;
+            right: 10px;
+            width: 32px;
+            height: 32px;
+            background-color: #e53935;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Stealth Custom Settings Panel */
         #setup-panel {
-            background-color: #222;
+            display: none;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
             color: #fff;
             padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            width: 360px;
+            border-radius: 12px;
+            width: 340px;
             box-sizing: border-box;
             font-size: 14px;
+            position: absolute;
+            top: 70px;
+            z-index: 100;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
         }
         #setup-panel h3 {
-            margin: 0 0 10px 0;
-            color: #ffcc00;
+            margin: 0 0 12px 0;
+            color: #e53935;
+            font-size: 16px;
+            text-align: center;
         }
         .setup-group {
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
+        /* Custom styled flat selectors to bypass iOS wheel menus */
         .setup-group select {
-            padding: 5px;
-            border-radius: 4px;
-            width: 120px;
+            padding: 6px 10px;
+            background-color: #2a2a2a;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 6px;
+            width: 130px;
+            font-size: 14px;
+            outline: none;
         }
         .status-badge {
             font-weight: bold;
-            padding: 2px 6px;
+            padding: 3px 8px;
             border-radius: 4px;
+            font-size: 12px;
         }
-        .status-idle { background-color: #555; }
-        .status-armed { background-color: #d9534f; }
+        .status-idle { background-color: #444; color: #aaa; }
+        .status-armed { background-color: #e53935; color: #fff; }
 
-        /* Outer CalculatorSoup Wrapper Match */
-        .cs_calculator {
-            width: 400px;
-            max-width: 100%;
-            text-align: center;
-        }
-
-        /* Inner Widget Container */
-        .widget-box {
-            background-color: #b64b39;
-            border: 1px solid #000000;
-            border-radius: 6px;
-            padding: 20px;
-            box-sizing: border-box;
-            color: #ffffff;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .widget-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            cursor: pointer; /* Hidden action to toggle setup panel view */
-            user-select: none;
-        }
-
-        /* Card Display Window */
-        .card-display-area {
-            background-color: #ffffff;
-            border-radius: 6px;
-            height: 220px;
+        /* Main Presentation Container */
+        .card-container {
+            flex: 1;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            margin-bottom: 20px;
-            color: #000000;
-            font-size: 16px;
-            font-weight: bold;
-            border: 1px solid #999;
-        }
-
-        .large-card {
-            font-size: 70px;
-            line-height: 1;
-            margin-bottom: 10px;
-        }
-
-        .card-text {
-            font-size: 18px;
-        }
-
-        /* Native-looking Button styling */
-        .generate-btn {
-            background-color: #ffffff;
-            color: #b64b39;
-            border: 2px solid #ffffff;
-            padding: 12px 24px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 4px;
-            cursor: pointer;
             width: 100%;
-            transition: background-color 0.2s;
-        }
-        .generate-btn:active {
-            background-color: #e6e6e6;
+            padding: 10px 0;
         }
 
-        /* Footer Links */
-        .footer-text {
-            font-size: 14px;
-            margin-top: 12px;
-            color: #000000;
-        }
-        .footer-text a {
-            color: #b64b39;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        /* Secret trigger text styling */
-        .secret-trigger {
-            color: #000000;
-            text-decoration: none;
-            cursor: default;
+        /* Playing Card Viewport Matching image_5.png proportions */
+        .playing-card {
+            background-color: #ffffff;
+            border-radius: 22px;
+            width: 82vw;
+            height: 118vw;
+            max-width: 310px;
+            max-height: 445px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 18px;
+            box-sizing: border-box;
             user-select: none;
+            -webkit-user-select: none;
+            transition: transform 0.15s ease-out;
+            transform: rotate(-2deg); /* Mimics the slight natural tilt seen in image_5.png */
+        }
+        .playing-card:active {
+            transform: scale(0.98) rotate(-2deg);
+        }
+
+        /* Bicycle Rider Back Styled View */
+        .card-back-pattern {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 4px solid #b31010;
+            border-radius: 12px;
+            background-color: #b31010;
+            /* Elaborate Victorian style pattern layer mimicking a rider back structure */
+            background-image: 
+                radial-gradient(circle at 50% 50%, #ffffff 2px, transparent 3px),
+                radial-gradient(circle at 30% 40%, transparent 8px, #ffffff 1px, transparent 10px),
+                radial-gradient(circle at 70% 40%, transparent 8px, #ffffff 1px, transparent 10px),
+                linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.15) 75%),
+                linear-gradient(135deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.15) 75%);
+            background-size: 20px 20px, 40px 40px, 40px 40px, 10px 10px, 10px 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .card-back-scrollwork {
+            width: 85%;
+            height: 85%;
+            border: 2px dashed rgba(255,255,255,0.4);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .card-back-centerpiece {
+            width: 50px;
+            height: 70px;
+            border: 2px solid rgba(255,255,255,0.6);
+            border-radius: 50%;
+            background: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.3) 2px, rgba(255,255,255,0.3) 4px);
+        }
+
+        /* Native Card Layout Indices */
+        .card-corner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 0.9;
+            font-weight: 700;
+            font-size: 38px;
+            letter-spacing: -2px;
+        }
+        .card-corner.bottom {
+            transform: rotate(180deg);
+        }
+        .card-corner-suit {
+            font-size: 26px;
+            margin-top: 2px;
+        }
+
+        /* Central Pips System matching precise structural layouts */
+        .center-pips {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 75px;
+            position: relative;
+        }
+        
+        /* Layout structures for different pip distributions */
+        .pip-grid-3 {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 80%;
+            font-size: 55px;
+        }
+
+        /* Stealth Control Triggers in Footer */
+        .bottom-bar {
+            width: 100%;
+            max-width: 380px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px 20px 15px;
+            box-sizing: border-box;
+            color: #555555;
+            font-size: 13px;
+        }
+        .cards-left {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .cards-count {
+            color: #888888;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .history-trigger {
+            border: 1px solid #333333;
+            padding: 6px 14px;
+            border-radius: 8px;
+            color: #e53935;
+            font-size: 13px;
+            font-weight: 600;
+            background: transparent;
+            user-select: none;
+            -webkit-user-select: none;
         }
     </style>
 </head>
 <body>
 
+    <!-- Top Navigation Section -->
+    <div class="top-bar">
+        <div class="card-title" id="display-title">Card Generator</div>
+        <!-- Disguised configuration trigger matching layout aesthetics -->
+        <div class="secret-gear" id="gear-trigger">+</div>
+    </div>
+
+    <!-- Configuration Settings Drawer -->
     <div id="setup-panel">
-        <h3>Magician Settings</h3>
+        <h3>Trick Configuration</h3>
         <div class="setup-group">
-            <label for="force-value">Force Card Value:</label>
+            <label for="force-value">Force Value:</label>
             <select id="force-value">
                 <option value="A">Ace</option>
                 <option value="2">2</option>
-                <option value="3">3</option>
+                <option value="3" selected>3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
                 <option value="6">6</option>
-                <option value="7" selected>7</option>
+                <option value="7">7</option>
                 <option value="8">8</option>
                 <option value="9">9</option>
                 <option value="10">10</option>
@@ -163,7 +284,7 @@
             </select>
         </div>
         <div class="setup-group">
-            <label for="force-suit">Force Card Suit:</label>
+            <label for="force-suit">Force Suit:</label>
             <select id="force-suit">
                 <option value="♠">Spades</option>
                 <option value="♥">Hearts</option>
@@ -172,102 +293,170 @@
             </select>
         </div>
         <div class="setup-group">
-            <span>Status:</span>
-            <span id="status-badge" class="status-badge status-idle">IDLE (Random)</span>
+            <span>Engine Mode:</span>
+            <span id="status-badge" class="status-badge status-idle">RANDOM GENERATION</span>
         </div>
-        <p style="font-size: 11px; margin: 5px 0 0 0; color: #aaa;">Click the widget header to hide this panel. Click "by CalculatorSoup" in the footer to arm/disarm.</p>
     </div>
 
-    <div class="cs_calculator">
-        <div class="widget-box">
-            <div class="widget-title" id="widget-header">Random Card Generator</div>
-            
-            <div class="card-display-area" id="display-box">
-                <div class="large-card" id="card-suit" style="color: #666;">🂠</div>
-                <div class="card-text" id="card-name">Click Generate to Draw</div>
+    <!-- Main Deck Presentation Screen Area -->
+    <div class="card-container">
+        <div class="playing-card" id="deck-card">
+            <!-- Initial Card Back Mode (Bicycle Inspired Styling) -->
+            <div class="card-back-pattern" id="card-back">
+                <div class="card-back-scrollwork">
+                    <div class="card-back-centerpiece"></div>
+                </div>
             </div>
 
-            <button class="generate-btn" id="draw-button">Generate Card</button>
+            <!-- Dynamic Front View Face Components (Hidden Initially) -->
+            <div class="card-corner top" id="corner-top" style="visibility: hidden;">
+                <div class="card-value-id">3</div>
+                <div class="card-corner-suit">♦</div>
+            </div>
+            
+            <div class="center-pips" id="pips-area" style="visibility: hidden;">
+                <!-- Internal layouts handled inside JavaScript engines -->
+            </div>
+            
+            <div class="card-corner bottom" id="corner-bottom" style="visibility: hidden;">
+                <div class="card-value-id">3</div>
+                <div class="card-corner-suit">♦</div>
+            </div>
         </div>
-        
-        <p class="footer-text">
-            <a href="#" onclick="return false;">Random Card Generator</a> 
-            <span class="secret-trigger" id="secret-trigger">by CalculatorSoup</span>
-        </p>
+    </div>
+
+    <!-- Screen Footer elements containing secondary stealth activation items -->
+    <div class="bottom-bar">
+        <div class="cards-left" id="stealth-arm-trigger">
+            <span class="cards-count">52</span>
+            <span>Cards remaining</span>
+        </div>
+        <button class="history-trigger" onclick="return false;">Card History</button>
     </div>
 
     <script>
-        // Data sets
         const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
         const suits = [
-            { symbol: '♠', name: 'Spades', color: '#000000' },
-            { symbol: '♥', name: 'Hearts', color: '#ff0000' },
-            { symbol: '♦', name: 'Diamonds', color: '#ff0000' },
-            { symbol: '♣', name: 'Clubs', color: '#000000' }
+            { symbol: '♠', name: 'Spades', color: '#111111' },
+            { symbol: '♥', name: 'Hearts', color: '#e53935' },
+            { symbol: '♦', name: 'Diamonds', color: '#e53935' },
+            { symbol: '♣', name: 'Clubs', color: '#111111' }
         ];
 
         let isArmed = false;
+        let hasDrawn = false;
 
-        // DOM elements
+        const gearTrigger = document.getElementById('gear-trigger');
         const setupPanel = document.getElementById('setup-panel');
-        const widgetHeader = document.getElementById('widget-header');
-        const secretTrigger = document.getElementById('secret-trigger');
+        const stealthArmTrigger = document.getElementById('stealth-arm-trigger');
         const statusBadge = document.getElementById('status-badge');
-        const drawButton = document.getElementById('draw-button');
         
-        const cardSuitDisplay = document.getElementById('card-suit');
-        const cardNameDisplay = document.getElementById('card-name');
+        const deckCard = document.getElementById('deck-card');
+        const cardBack = document.getElementById('card-back');
+        const displayTitle = document.getElementById('display-title');
+        
+        const cornerTop = document.getElementById('corner-top');
+        const cornerBottom = document.getElementById('corner-bottom');
+        const pipsArea = document.getElementById('pips-area');
         
         const forceValueSelect = document.getElementById('force-value');
         const forceSuitSelect = document.getElementById('force-suit');
 
-        // Toggle Setup Panel visibility when clicking the main widget header
-        widgetHeader.addEventListener('click', () => {
-            if (setupPanel.style.display === 'none') {
-                setupPanel.style.display = 'block';
-            } else {
-                setupPanel.style.display = 'none';
-            }
+        // Toggle the visibility of the configuration box via top right button
+        gearTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            setupPanel.style.display = (setupPanel.style.display === 'block') ? 'none' : 'block';
         });
 
-        // Secretly toggle Arm/Disarm mode when clicking the copyright text
-        secretTrigger.addEventListener('click', () => {
+        // Close settings drawer when tapping anywhere else on screen
+        document.body.addEventListener('click', () => {
+            setupPanel.style.display = 'none';
+        });
+        setupPanel.addEventListener('click', (e) => e.stopPropagation());
+
+        // Secretly Arm or Disarm the force by tapping the "Cards remaining" text area in footer
+        stealthArmTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
             isArmed = !isArmed;
             if (isArmed) {
-                statusBadge.textContent = 'ARMED (Force Next)';
+                statusBadge.textContent = 'NEXT FORCE ACTIVE';
                 statusBadge.className = 'status-badge status-armed';
             } else {
-                statusBadge.textContent = 'IDLE (Random)';
+                statusBadge.textContent = 'RANDOM GENERATION';
                 statusBadge.className = 'status-badge status-idle';
             }
         });
 
-        // Drawing a card
-        drawButton.addEventListener('click', () => {
-            let chosenValue = '';
-            let chosenSuit = null;
+        // Handle Card Drawing Logic on tapping the main playing card interface
+        deckCard.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            let finalValue = '';
+            let finalSuit = null;
 
             if (isArmed) {
-                // FORCE LOGIC
-                chosenValue = forceValueSelect.value;
+                finalValue = forceValueSelect.value;
                 const targetSuitSymbol = forceSuitSelect.value;
-                chosenSuit = suits.find(s => s.symbol === targetSuitSymbol);
+                finalSuit = suits.find(s => s.symbol === targetSuitSymbol);
 
-                // Auto reset system back to normal
+                // Disarm automatically after action execution
                 isArmed = false;
-                statusBadge.textContent = 'IDLE (Random)';
+                statusBadge.textContent = 'RANDOM GENERATION';
                 statusBadge.className = 'status-badge status-idle';
             } else {
-                // TRULY RANDOM LOGIC
-                chosenValue = values[Math.floor(Math.random() * values.length)];
-                chosenSuit = suits[Math.floor(Math.random() * suits.length)];
+                finalValue = values[Math.floor(Math.random() * values.length)];
+                finalSuit = suits[Math.floor(Math.random() * suits.length)];
             }
 
-            // Update user interface
-            cardSuitDisplay.textContent = chosenSuit.symbol;
-            cardSuitDisplay.style.color = chosenSuit.color;
-            cardNameDisplay.textContent = `${chosenValue} of ${chosenSuit.name}`;
+            // Remove the Bicycle back view completely
+            cardBack.style.display = 'none';
+
+            // Configure corner textual indices updates
+            document.querySelectorAll('.card-value-id').forEach(el => el.textContent = finalValue);
+            document.querySelectorAll('.card-corner-suit').forEach(el => {
+                el.textContent = finalSuit.symbol;
+                el.style.color = finalSuit.color;
+            });
+            cornerTop.style.color = finalSuit.color;
+            cornerBottom.style.color = finalSuit.color;
+
+            // Make faces elements active visually
+            cornerTop.style.visibility = 'visible';
+            cornerBottom.style.visibility = 'visible';
+            pipsArea.style.visibility = 'visible';
+
+            // Render matching interior pip counts layouts matching original card shapes
+            renderPips(finalValue, finalSuit);
+
+            // Update top text title matching display profile design in image_5.png
+            displayTitle.textContent = `${finalValue} of ${finalSuit.name}`;
+            displayTitle.style.color = finalSuit.color;
         });
+
+        function renderPips(value, suit) {
+            pipsArea.innerHTML = '';
+            pipsArea.style.color = suit.color;
+
+            // Handle clean structural layout setups for basic presentation 
+            if (['J', 'Q', 'K'].includes(value)) {
+                pipsArea.style.fontSize = '110px';
+                pipsArea.textContent = value;
+            } else if (value === 'A') {
+                pipsArea.style.fontSize = '100px';
+                pipsArea.textContent = suit.symbol;
+            } else if (value === '3') {
+                pipsArea.innerHTML = `
+                    <div class="pip-grid-3">
+                        <div>${suit.symbol}</div>
+                        <div>${suit.symbol}</div>
+                        <div>${suit.symbol}</div>
+                    </div>`;
+            } else {
+                // Multi-pip block fallback array
+                pipsArea.style.fontSize = '75px';
+                pipsArea.textContent = suit.symbol;
+            }
+        }
     </script>
 </body>
 </html>
