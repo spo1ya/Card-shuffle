@@ -30,7 +30,7 @@
             position: relative;
             height: 45px;
             margin-top: 10px;
-            z-index: 50;
+            z-index: 100;
         }
 
         .card-title {
@@ -65,7 +65,7 @@
             box-sizing: border-box;
             position: absolute;
             top: 60px;
-            z-index: 100;
+            z-index: 200;
             box-shadow: 0 12px 36px rgba(0,0,0,0.75);
         }
         #setup-panel h3 {
@@ -116,6 +116,7 @@
 
         /* ── CARD SHELL ────────────────────────────────────────── */
         .playing-card {
+            background-color: #ffffff; /* FIX: Prevents transparency glow/ghosting */
             border-radius: 12px;
             width: 71vw;
             aspect-ratio: 203 / 288;
@@ -126,59 +127,38 @@
             -webkit-user-select: none;
             overflow: hidden;
 
-            /* Matches the clean depth shadows from the reference application video */
+            /* Crisp drop shadow to separate layers in the pile */
             box-shadow:
-                0 4px  10px rgba(0, 0, 0, 0.35),
-                0 12px 32px rgba(0, 0, 0, 0.6),
-                0 0   0   1px rgba(255,255,255,0.05) inset;
+                0 4px 12px rgba(0, 0, 0, 0.35),
+                0 12px 28px rgba(0, 0, 0, 0.45);
 
-            /* Base initial state parameters before animation triggers */
+            /* Default start state: High above the screen */
             opacity: 0;
-            transform: translateY(120px) scale(0.92);
-            z-index: 20;
-            will-change: transform, opacity;
+            transform: translateY(-120vh) rotate(-15deg);
         }
 
+        /* ── CARD IMAGE ────────────────────────────────────────── */
         .card-img {
             width: 100%;
             height: 100%;
             display: block;
+            image-rendering: auto;
         }
 
-        /* ── EXACT TRANSITION ANIMATIONS ───────────────────────── */
-        /* * Replaced complex spring bouncing steps with the exact crisp ease-out deceleration curve
-         * used in native iOS interface frameworks.
-         */
+        /* ── THROW DOWN ANIMATION ──────────────────────────────── */
         .playing-card.entering {
-            animation: cardSlideIn 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            z-index: 30; /* Forces incoming card to stack over the departing element */
+            animation: cardThrowDown 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.12) forwards;
         }
 
-        .playing-card.leaving {
-            animation: cardSlideOut 0.34s cubic-bezier(0.4, 0, 1, 1) forwards;
-            z-index: 10; /* Keeps outbound card underneath the main deck projection */
-            pointer-events: none;
-        }
-
-        @keyframes cardSlideIn {
+        @keyframes cardThrowDown {
             0% {
-                transform: translateY(140px) scale(0.9);
+                transform: translateY(-100vh) rotate(-25deg) scale(1.1);
                 opacity: 0;
             }
             100% {
-                transform: translateY(0) scale(1);
+                /* Lands on customized dynamic positions generated via JS */
+                transform: translate(var(--rand-x, 0px), var(--rand-y, 0px)) rotate(var(--rand-rot, 0deg)) scale(1);
                 opacity: 1;
-            }
-        }
-
-        @keyframes cardSlideOut {
-            0% {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-160px) scale(0.92);
-                opacity: 0;
             }
         }
 
@@ -186,11 +166,11 @@
         .initial-prompt {
             position: absolute;
             font-size: 18px;
-            color: #3e3e3e;
+            color: #4e4e4e;
             font-weight: 500;
             pointer-events: none;
             text-align: center;
-            z-index: 40;
+            z-index: 10;
         }
 
         /* ── BOTTOM BAR ────────────────────────────────────────── */
@@ -204,7 +184,7 @@
             box-sizing: border-box;
             color: #3a3a3a;
             font-size: 13px;
-            z-index: 50;
+            z-index: 100;
         }
         .cards-left {
             display: flex;
@@ -285,18 +265,21 @@
     <script>
         const values = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
         const suits = [
-            { symbol:'♠', id:'S', name:'Spades',   color:'#211C1D' },
-            { symbol:'♥', id:'H', name:'Hearts',   color:'#BC1E24' },
+            { symbol:'♠', id:'S', name:'Spades',    color:'#211C1D' },
+            { symbol:'♥', id:'H', name:'Hearts',    color:'#BC1E24' },
             { symbol:'♦', id:'D', name:'Diamonds', color:'#BC1E24' },
             { symbol:'♣', id:'C', name:'Clubs',    color:'#211C1D' }
         ];
 
         const LABELS = { A:'Ace', J:'Jack', Q:'Queen', K:'King' };
 
+        // ── State ─────────────────────────────────────────────────
         let isArmed       = false;
         let runningCount  = 108;
         let currentCardEl = null;
+        let zIndexCounter = 20;
 
+        // ── DOM refs ──────────────────────────────────────────────
         const bodyTrigger  = document.getElementById('body-trigger');
         const gearTrigger  = document.getElementById('gear-trigger');
         const setupPanel   = document.getElementById('setup-panel');
@@ -309,6 +292,7 @@
         const forceValue   = document.getElementById('force-value');
         const forceSuit    = document.getElementById('force-suit');
 
+        // ── Image cache ───────────────────────────────────────────
         const imgCache = {};
 
         function preloadAll() {
@@ -328,24 +312,32 @@
             return img && img.complete && img.naturalWidth > 0;
         }
 
+        // ── Core render ───────────────────────────────────────────
         function renderCard(val, suitObj) {
             const key = `${val}${suitObj.id}`;
 
-            // Handle exit animation processing
+            // Instead of deleting the old card instantly, remove its animation class
+            // so it settles cleanly into the pile background.
             if (currentCardEl) {
-                const old = currentCardEl;
-                old.classList.remove('entering');
-                old.classList.add('leaving');
-                
-                // Sweeps out the card element node right as the slideOut keyframe loop resolves
-                setTimeout(() => {
-                    if (old.parentNode) old.parentNode.removeChild(old);
-                }, 340);
+                currentCardEl.classList.remove('entering');
             }
 
-            // Build dynamic high-resolution card frame vector shell
+            // Build the new card
             const card = document.createElement('div');
             card.className = 'playing-card entering';
+            
+            // Increment z-index so the newest card lands flawlessly on top
+            zIndexCounter++;
+            card.style.zIndex = zIndexCounter;
+
+            // Generate slight organic shifts (offset/rotation) so they pile naturally
+            const randomRot = (Math.random() * 6 - 3).toFixed(2); // Between -3deg and 3deg
+            const randomX = (Math.random() * 10 - 5).toFixed(2);  // Between -5px and 5px
+            const randomY = (Math.random() * 10 - 5).toFixed(2);  // Between -5px and 5px
+            
+            card.style.setProperty('--rand-rot', `${randomRot}deg`);
+            card.style.setProperty('--rand-x', `${randomX}px`);
+            card.style.setProperty('--rand-y', `${randomY}px`);
 
             const img = document.createElement('img');
             img.className  = 'card-img';
@@ -356,7 +348,14 @@
             cardStage.appendChild(card);
             currentCardEl = card;
 
-            // Animate card label
+            // Performance Guard: Keep only the top 8 cards in the visual pile 
+            // so memory stays light and rendering stays crisp.
+            const totalCards = cardStage.querySelectorAll('.playing-card');
+            if (totalCards.length > 8) {
+                cardStage.removeChild(totalCards[0]);
+            }
+
+            // Update the title label
             displayTitle.classList.remove('visible');
             setTimeout(() => {
                 displayTitle.textContent = `${LABELS[val] || val} of ${suitObj.name}`;
@@ -365,6 +364,7 @@
             }, 60);
         }
 
+        // ── Deal logic ────────────────────────────────────────────
         function dealCard(val, suitObj) {
             const key = `${val}${suitObj.id}`;
 
@@ -381,13 +381,17 @@
             }
         }
 
+        // ── Settings panel ────────────────────────────────────────
         gearTrigger.addEventListener('click', e => {
             e.stopPropagation();
             setupPanel.style.display = setupPanel.style.display === 'block' ? 'none' : 'block';
         });
-        document.body.addEventListener('click', () => { setupPanel.style.display = 'none'; });
+        document.body.addEventListener('click', () => {
+            setupPanel.style.display = 'none';
+        });
         setupPanel.addEventListener('click', e => e.stopPropagation());
 
+        // ── Stealth arm ───────────────────────────────────────────
         stealthArm.addEventListener('click', e => {
             e.stopPropagation();
             isArmed = !isArmed;
@@ -395,6 +399,7 @@
             statusBadge.className   = isArmed ? 'status-badge status-armed' : 'status-badge status-idle';
         });
 
+        // ── Main tap ──────────────────────────────────────────────
         bodyTrigger.addEventListener('click', () => {
             if (promptText) promptText.style.display = 'none';
 
