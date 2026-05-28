@@ -61,7 +61,6 @@
             display: none;
             background-color: #161616;
             border: 1px solid #262626;
-            padding: 166px;
             padding: 16px;
             border-radius: 14px;
             width: 320px;
@@ -147,6 +146,7 @@
             transform: translateY(40px);
             box-sizing: border-box;
             color: #000000;
+            overflow: hidden; /* Ensures full-card images stay contained within corners */
         }
 
         /* Clean Native Fluid Dealing Velocity */
@@ -181,6 +181,7 @@
             width: 35px;
             height: 73px;
             box-sizing: border-box;
+            z-index: 5;
         }
         
         .component-corner.top-left {
@@ -243,13 +244,22 @@
             justify-content: center;
         }
 
-        /* Center Court Image Canvas Window */
+        /* Full Card / Center Court Graphics Container Box */
+        #card-face-center {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            box-sizing: border-box;
+        }
+
         .court-illustration-box {
             position: absolute;
-            width: 135px;
-            height: 216px;
-            left: calc(50% - 135px/2);
-            top: calc(50% - 216px/2);
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
             background-size: 100% 100%;
             background-repeat: no-repeat;
             background-position: center;
@@ -385,10 +395,10 @@
     <script>
         const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
         const suits = [
-            { symbol: '♠', id: 'S', name: 'Spades', color: '#211C1D', border: '3px' }, 
-            { symbol: '♥', id: 'H', name: 'Hearts', color: '#BC1E24', border: '3px' },  
-            { symbol: '♦', id: 'D', name: 'Diamonds', color: '#BC1E24', border: '2px' },
-            { symbol: '♣', id: 'C', name: 'Clubs', color: '#211C1D', border: '3px' }   
+            { symbol: '♠', id: 'S', name: 'Spades', color: '#211C1D' }, 
+            { symbol: '♥', id: 'H', name: 'Hearts', color: '#BC1E24' },  
+            { symbol: '♦', id: 'D', name: 'Diamonds', color: '#BC1E24' },
+            { symbol: '♣', id: 'C', name: 'Clubs', color: '#211C1D' }   
         ];
 
         let isArmed = false;
@@ -478,14 +488,18 @@
 
         function buildCardCenterGraphic(val, suit) {
             cardFaceCenter.innerHTML = '';
+            
+            // Default visibility state for non-court cards
+            document.querySelectorAll('.component-corner').forEach(el => el.style.display = 'block');
 
-            // If it's a Jack, pull the graphic straight from your GitHub repository folder
+            // When a Jack is drawn, clear programmatic layouts and load full images directly
             if (val === 'J') {
+                document.querySelectorAll('.component-corner').forEach(el => el.style.display = 'none');
+                
                 const courtDiv = document.createElement('div');
                 courtDiv.className = 'court-illustration-box';
-                courtDiv.style.border = `${suit.border} solid #000000`;
                 
-                // Generates standard filenames like JD.png, JH.png, JS.png, JC.png
+                // Construct standard image filename (e.g. JD.png, JH.png)
                 const imageFilename = `J${suit.id}.png`; 
                 courtDiv.style.backgroundImage = `url('${imageFilename}')`;
                 
@@ -493,7 +507,7 @@
                 return;
             }
 
-            // Procedural layout logic for standard numeric options
+            // Procedural layout logic for regular numbered options
             const pipsContainer = document.createElement('div');
             pipsContainer.className = 'center-pips';
             pipsContainer.style.color = suit.color;
@@ -509,7 +523,7 @@
             else if (val === '8') coordinates = [{ x: 15, y: 10 }, { x: 65, y: 10 }, { x: 40, y: 27 }, { x: 15, y: 44 }, { x: 65, y: 44 }, { x: 40, y: 61, inv: true }, { x: 15, y: 78, inv: true }, { x: 65, y: 78, inv: true }];
             else if (val === '9') coordinates = [{ x: 15, y: 10 }, { x: 65, y: 10 }, { x: 15, y: 32 }, { x: 65, y: 32 }, { x: 40, y: 44 }, { x: 15, y: 56, inv: true }, { x: 65, y: 56, inv: true }, { x: 15, y: 78, inv: true }, { x: 65, y: 78, inv: true }];
             else if (val === '10') coordinates = [{ x: 15, y: 10 }, { x: 65, y: 10 }, { x: 40, y: 21 }, { x: 15, y: 32 }, { x: 65, y: 32 }, { x: 15, y: 56, inv: true }, { x: 65, y: 56, inv: true }, { x: 40, y: 67, inv: true }, { x: 15, y: 78, inv: true }, { x: 65, y: 78, inv: true }];
-            else if (['Q', 'K'].includes(val)) coordinates = [{ x: 40, y: 42, size: 30 }]; // Simple temporary display until you add Q/K pictures
+            else if (['Q', 'K'].includes(val)) coordinates = [{ x: 40, y: 42, size: 30 }]; 
 
             coordinates.forEach(coord => {
                 const pipDiv = document.createElement('div');
