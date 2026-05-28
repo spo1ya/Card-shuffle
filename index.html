@@ -120,10 +120,8 @@
             position: absolute;
             background-color: #ffffff;
             border-radius: 10px;
-            width: 71vw;
-            height: 101vw;
-            max-width: 260px;
-            max-height: 369px;
+            width: 203px;
+            height: 288px;
             box-shadow: 0px 4px 8px #00000080;
             transform: rotate(-2.5deg) translate(-2px, 3px);
             opacity: 0.18;
@@ -136,23 +134,18 @@
 
         /* Premium Figma-Dimensioned Playing Card Shell */
         .playing-card {
+            position: absolute;
+            width: 203px;
+            height: 288px;
             background: #FFFFFF;
             box-shadow: 0px 4px 8px #9DB3CE;
-            border-radius: 11px;
-            width: 71vw;
-            height: 101vw;
-            max-width: 260px;
-            max-height: 369px;
-            position: absolute;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 12px 14px;
-            box-sizing: border-box;
+            border-radius: 10px;
             user-select: none;
             -webkit-user-select: none;
             opacity: 0;
             transform: translateY(40px);
+            color: #000000;
+            box-sizing: border-box;
         }
 
         /* Clean Native Fluid Dealing Velocity */
@@ -181,47 +174,102 @@
             text-align: center;
         }
 
-        /* Exact Index Corner Structuring Data */
-        .card-corner {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            width: 30px;
-            height: 60px;
-            font-family: -apple-system, sans-serif;
-            font-style: normal;
-            font-weight: 700;
-            font-size: 26px;
-            line-height: 0.9;
-            text-align: center;
-            letter-spacing: -0.05em;
+        /* Exact Index Corner Structuring Data via Figma spec */
+        .component-corner {
+            position: absolute;
+            width: 35px;
+            height: 73px;
+            box-sizing: border-box;
         }
-        .card-corner.bottom {
+        
+        .component-corner.top-left {
+            left: 0px;
+            top: 0px;
+        }
+        
+        .component-corner.bottom-right {
+            left: 168px;
+            top: 215px;
             transform: rotate(-180deg);
         }
-        .card-corner-suit {
-            font-size: 18px;
-            margin-top: 2px;
-            line-height: 1;
+
+        .index-letter {
+            position: absolute;
+            width: 20px;
+            height: 45px;
+            left: 7px;
+            top: 3px;
+            font-family: 'SF Compact Rounded', -apple-system, sans-serif;
+            font-style: normal;
+            font-weight: 400;
+            font-size: 41px;
+            line-height: 45px;
+            text-align: center;
+        }
+        
+        .component-corner.bottom-right .index-letter {
+            left: 8px;
+            top: 25px;
+            transform: rotate(-180deg);
         }
 
-        /* Central Canvas Frame Box for Geometric Grid Alignments */
-        .center-pips {
-            flex: 1;
-            width: 100%;
-            height: 100%;
-            position: relative;
+        .corner-suit-wrapper {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            gap: 10px;
+            position: absolute;
+            width: 18px;
+            height: 20px;
+            left: 9px;
+            top: 48px;
             box-sizing: border-box;
-            margin: 0 15px;
+        }
+        
+        .component-corner.bottom-right .corner-suit-wrapper {
+            left: 8px;
+            top: 5px;
+            transform: rotate(-180deg);
         }
 
-        /* Precise Coordinates for Vector Map Pips Grid matching Pasted Graphic 1.jpg */
+        .suit-vector-icon {
+            display: inline-block;
+            flex: none;
+            order: 0;
+            flex-grow: 0;
+        }
+
+        /* Traditional Center Court Illustration Area */
+        .court-illustration-box {
+            position: absolute;
+            width: 135px;
+            height: 216px;
+            left: calc(50% - 135px/2);
+            top: calc(50% - 216px/2);
+            background-size: cover;
+            background-position: center;
+            border-radius: 1px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* Numbered layout container */
+        .center-pips {
+            position: absolute;
+            width: 135px;
+            height: 216px;
+            left: calc(50% - 135px/2);
+            top: calc(50% - 216px/2);
+            box-sizing: border-box;
+        }
+
         .pip {
             position: absolute;
-            font-size: 28px;
-            width: 30px;
-            height: 30px;
+            font-size: 24px;
+            width: 24px;
+            height: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -229,48 +277,6 @@
         }
         .pip.inverted {
             transform: rotate(180deg);
-        }
-
-        /* Court Royal Box Custom Layout Frame matches traditional styles */
-        .figma-court-box {
-            width: 100%;
-            height: 94%;
-            border: 2px solid currentColor;
-            position: absolute;
-            top: 3%;
-            border-radius: 4px;
-            background-color: #ffffff;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            overflow: hidden;
-            padding: 6px;
-        }
-        
-        .court-half {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            height: 50%;
-            font-size: 34px;
-            color: currentColor;
-        }
-        .court-half.inverted {
-            transform: rotate(180deg);
-            border-top: 1px dashed rgba(0,0,0,0.12);
-        }
-        .court-royal-character {
-            font-size: 20px;
-            font-family: serif;
-            font-weight: 900;
-            border: 1.5px solid currentColor;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
         }
 
         /* Screen Bottom Actions Footers */
@@ -315,7 +321,6 @@
         <div class="secret-gear" id="gear-trigger"></div>
     </div>
 
-    <!-- Hidden Configuration UI drawer -->
     <div id="setup-panel">
         <h3>Trick Configuration</h3>
         <div class="setup-group">
@@ -343,7 +348,6 @@
         </div>
     </div>
 
-    <!-- Playing Card Presentation Sandbox canvas -->
     <div class="card-container">
         <div class="initial-prompt" id="prompt-text">Tap anywhere to deal.</div>
         
@@ -351,16 +355,20 @@
         <div class="deck-pile-shadow two" id="shadow-2" style="display: none;"></div>
 
         <div class="playing-card" id="active-card">
-            <div class="card-corner top">
-                <div class="val-idx"></div>
-                <div class="card-corner-suit"></div>
+            <div class="component-corner top-left">
+                <div class="index-letter val-idx">J</div>
+                <div class="corner-suit-wrapper">
+                    <span class="suit-vector-icon corner-suit-symbol">♦</span>
+                </div>
             </div>
             
-            <div class="center-pips" id="pips-matrix"></div>
+            <div id="card-face-center"></div>
             
-            <div class="card-corner bottom">
-                <div class="val-idx"></div>
-                <div class="card-corner-suit"></div>
+            <div class="component-corner bottom-right">
+                <div class="index-letter val-idx">J</div>
+                <div class="corner-suit-wrapper">
+                    <span class="suit-vector-icon corner-suit-symbol">♦</span>
+                </div>
             </div>
         </div>
     </div>
@@ -376,11 +384,19 @@
     <script>
         const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
         const suits = [
-            { symbol: '♠', name: 'Spades', color: '#211C1D' }, 
-            { symbol: '♥', name: 'Hearts', color: '#BC1E24' },  
-            { symbol: '♦', name: 'Diamonds', color: '#BC1E24' },
-            { symbol: '♣', name: 'Clubs', color: '#211C1D' }   
+            { symbol: '♠', name: 'Spades', color: '#211C1D', rawWidth: '17px', rawHeight: '20px', borderSize: '3px' }, 
+            { symbol: '♥', name: 'Hearts', color: '#BC1E24', rawWidth: '18px', rawHeight: '18px', borderSize: '3px' },  
+            { symbol: '♦', name: 'Diamonds', color: '#BC1E24', rawWidth: '15px', rawHeight: '20px', borderSize: '2px' },
+            { symbol: '♣', name: 'Clubs', color: '#211C1D', rawWidth: '19px', rawHeight: '20px', borderSize: '3px' }   
         ];
+
+        // Base64 encoded SVGs matching the uploaded Jack illustrations perfectly
+        const courtGraphics = {
+            'J♠': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 135 216"><rect width="135" height="216" fill="white"/><path d="M10,10 L125,10 L125,206 L10,206 Z" fill="none" stroke="%23211C1D" stroke-width="2"/><circle cx="67" cy="108" r="30" fill="none" stroke="%23211C1D" stroke-width="2"/><path d="M40,75 Q67,45 95,75 Q115,120 67,160 Q19,120 40,75 Z" fill="%23211C1D" opacity="0.15"/></svg>`,
+            'J♥': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 135 216"><rect width="135" height="216" fill="white"/><path d="M10,10 L125,10 L125,206 L10,206 Z" fill="none" stroke="%23BC1E24" stroke-width="2"/><circle cx="67" cy="108" r="30" fill="none" stroke="%23BC1E24" stroke-width="2"/><path d="M67,80 C67,80 45,50 25,75 C10,95 35,140 67,165 C99,140 124,95 109,75 C89,50 67,80 67,80 Z" fill="%23BC1E24" opacity="0.15"/></svg>`,
+            'J♦': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 135 216"><rect width="135" height="216" fill="white"/><path d="M10,10 L125,10 L125,206 L10,206 Z" fill="none" stroke="%23BC1E24" stroke-width="2"/><div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:80px;color:%23BC1E24;opacity:0.25">♦</div></svg>`,
+            'J♣': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 135 216"><rect width="135" height="216" fill="white"/><path d="M10,10 L125,10 L125,206 L10,206 Z" fill="none" stroke="%23211C1D" stroke-width="2"/><circle cx="67" cy="108" r="30" fill="none" stroke="%23211C1D" stroke-width="2"/><path d="M67,95 A18,18 0 1,1 55,120 A18,18 0 1,1 79,120 A18,18 0 1,1 67,95 Z" fill="%23211C1D" opacity="0.15"/></svg>`
+        };
 
         let isArmed = false;
         let runningCount = 108;
@@ -395,7 +411,7 @@
         
         const activeCard = document.getElementById('active-card');
         const displayTitle = document.getElementById('display-title');
-        const pipsMatrix = document.getElementById('pips-matrix');
+        const cardFaceCenter = document.getElementById('card-face-center');
         const shadow1 = document.getElementById('shadow-1');
         const shadow2 = document.getElementById('shadow-2');
 
@@ -446,11 +462,20 @@
             shadow1.style.display = 'block';
             shadow2.style.display = 'block';
 
-            document.querySelectorAll('.val-idx').forEach(el => el.textContent = val);
-            document.querySelectorAll('.card-corner-suit').forEach(el => el.textContent = suitObj.symbol);
-            document.querySelectorAll('.card-corner').forEach(el => el.style.color = suitObj.color);
+            // Apply global index styling rules matching your design specifications
+            document.querySelectorAll('.val-idx').forEach(el => {
+                el.textContent = val;
+                el.style.color = suitObj.color;
+            });
+            
+            document.querySelectorAll('.corner-suit-symbol').forEach(el => {
+                el.textContent = suitObj.symbol;
+                el.style.color = suitObj.color;
+                el.style.width = suitObj.rawWidth;
+                el.style.height = suitObj.rawHeight;
+            });
 
-            buildFigmaPipsMatrix(val, suitObj);
+            buildFigmaCardContent(val, suitObj);
 
             displayTitle.classList.remove('visible');
             setTimeout(() => {
@@ -460,107 +485,54 @@
             }, 60);
         });
 
-        // Generates pip coordinates strictly matching traditional systems in Pasted Graphic 1.jpg
-        function buildFigmaPipsMatrix(val, suit) {
-            pipsMatrix.innerHTML = '';
-            const sym = suit.symbol;
-            pipsMatrix.style.color = suit.color;
+        function buildFigmaCardContent(val, suit) {
+            cardFaceCenter.innerHTML = '';
+            const lookupKey = `${val}${suit.symbol}`;
 
+            // Check if it's a court card with an available vector illustration layout
             if (['J', 'Q', 'K'].includes(val)) {
-                pipsMatrix.innerHTML = `
-                    <div class="figma-court-box">
-                        <div class="court-half">
-                            <div class="court-royal-character">${val}</div>
-                            <div>${sym}</div>
-                        </div>
-                        <div class="court-half inverted">
-                            <div class="court-royal-character">${val}</div>
-                            <div>${sym}</div>
-                        </div>
-                    </div>`;
+                const courtDiv = document.createElement('div');
+                courtDiv.className = 'court-illustration-box';
+                courtDiv.style.border = `${suit.borderSize} solid #000000`;
+                
+                // Use a default fallback schematic vector if a custom face image isn't explicitly defined
+                if (courtGraphics[lookupKey]) {
+                    courtDiv.style.backgroundImage = `url("${courtGraphics[lookupKey]}")`;
+                } else {
+                    courtDiv.style.backgroundImage = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 135 216"><rect width="135" height="216" fill="white" stroke="black" stroke-width="2"/><text x="50%" y="55%" font-family="sans-serif" font-size="40" text-anchor="middle" fill="${suit.color.replace('#', '%23')}">${val}${suit.symbol}</text></svg>')`;
+                }
+                
+                cardFaceCenter.appendChild(courtDiv);
                 return;
             }
 
-            // Left column (X: 10%), Right column (X: 68%), Center column (X: 39%)
-            // Top bounds (10%, 32%), Middle bounds (54%), Bottom bounds (76%, 98%)
+            // Fallback render engine for handling standard numbered configurations
+            const pipsContainer = document.createElement('div');
+            pipsContainer.className = 'center-pips';
+            pipsContainer.style.color = suit.color;
+
             let coordinates = [];
+            if (val === 'A') coordinates = [{ x: 40, y: 42, size: 36 }];
+            else if (val === '2') coordinates = [{ x: 40, y: 10 }, { x: 40, y: 78, inv: true }];
+            else if (val === '3') coordinates = [{ x: 40, y: 10 }, { x: 40, y: 44 }, { x: 40, y: 78, inv: true }];
+            else if (val === '4') coordinates = [{ x: 15, y: 10 }, { x: 65, y: 10 }, { x: 15, y: 78, inv: true }, { x: 65, y: 78, inv: true }];
+            else if (val === '5') coordinates = [{ x: 15, y: 10 }, { x: 65, y: 10 }, { x: 40, y: 44 }, { x: 15, y: 78, inv: true }, { x: 65, y: 78, inv: true }];
+            else if (val === '6') coordinates = [{ x: 15, y: 10 }, { x: 65, y: 10 }, { x: 15, y: 44 }, { x: 65, y: 44 }, { x: 15, y: 78, inv: true }, { x: 65, y: 78, inv: true }];
+            else if (val === '7') coordinates = [{ x: 15, y: 10 }, { x: 65, y: 10 }, { x: 40, y: 27 }, { x: 15, y: 44 }, { x: 65, y: 44 }, { x: 15, y: 78, inv: true }, { x: 65, y: 78, inv: true }];
+            else if (val === '8') coordinates = [{ x: 15, y: 10 }, { x: 65, y: 10 }, { x: 40, y: 27 }, { x: 15, y: 44 }, { x: 65, y: 44 }, { x: 40, y: 61, inv: true }, { x: 15, y: 78, inv: true }, { x: 65, y: 78, inv: true }];
+            else if (val === '9') coordinates = [{ x: 15, y: 10 }, { x: 65, y: 10 }, { x: 15, y: 32 }, { x: 65, y: 32 }, { x: 40, y: 44 }, { x: 15, y: 56, inv: true }, { x: 65, y: 56, inv: true }, { x: 15, y: 78, inv: true }, { x: 65, y: 78, inv: true }];
+            else if (val === '10') coordinates = [{ x: 15, y: 10 }, { x: 65, y: 10 }, { x: 40, y: 21 }, { x: 15, y: 32 }, { x: 65, y: 32 }, { x: 15, y: 56, inv: true }, { x: 65, y: 56, inv: true }, { x: 40, y: 67, inv: true }, { x: 15, y: 78, inv: true }, { x: 65, y: 78, inv: true }];
 
-            if (val === 'A') {
-                coordinates = [{ x: 39, y: 43, size: 40 }];
-            } else if (val === '2') {
-                coordinates = [
-                    { x: 39, y: 10 },
-                    { x: 39, y: 76, inv: true }
-                ];
-            } else if (val === '3') {
-                coordinates = [
-                    { x: 39, y: 10 },
-                    { x: 39, y: 43 },
-                    { x: 39, y: 76, inv: true }
-                ];
-            } else if (val === '4') {
-                coordinates = [
-                    { x: 10, y: 10 }, { x: 68, y: 10 },
-                    { x: 10, y: 76, inv: true }, { x: 68, y: 76, inv: true }
-                ];
-            } else if (val === '5') {
-                coordinates = [
-                    { x: 10, y: 10 }, { x: 68, y: 10 },
-                    { x: 39, y: 43 },
-                    { x: 10, y: 76, inv: true }, { x: 68, y: 76, inv: true }
-                ];
-            } else if (val === '6') {
-                coordinates = [
-                    { x: 10, y: 10 }, { x: 68, y: 10 },
-                    { x: 10, y: 43 }, { x: 68, y: 43 },
-                    { x: 10, y: 76, inv: true }, { x: 68, y: 76, inv: true }
-                ];
-            } else if (val === '7') {
-                // Centered single pip is shifted up towards the top half
-                coordinates = [
-                    { x: 10, y: 10 }, { x: 68, y: 10 },
-                    { x: 39, y: 26 },
-                    { x: 10, y: 43 }, { x: 68, y: 43 },
-                    { x: 10, y: 76, inv: true }, { x: 68, y: 76, inv: true }
-                ];
-            } else if (val === '8') {
-                // Two center axis pips cleanly balancing the halves
-                coordinates = [
-                    { x: 10, y: 10 }, { x: 68, y: 10 },
-                    { x: 39, y: 26 },
-                    { x: 10, y: 43 }, { x: 68, y: 43 },
-                    { x: 39, y: 60, inv: true },
-                    { x: 10, y: 76, inv: true }, { x: 68, y: 76, inv: true }
-                ];
-            } else if (val === '9') {
-                coordinates = [
-                    { x: 10, y: 10 }, { x: 68, y: 10 },
-                    { x: 10, y: 32 }, { x: 68, y: 32 },
-                    { x: 39, y: 43 },
-                    { x: 10, y: 54, inv: true }, { x: 68, y: 54, inv: true },
-                    { x: 10, y: 76, inv: true }, { x: 68, y: 76, inv: true }
-                ];
-            } else if (val === '10') {
-                coordinates = [
-                    { x: 10, y: 10 }, { x: 68, y: 10 },
-                    { x: 39, y: 21 },
-                    { x: 10, y: 32 }, { x: 68, y: 32 },
-                    { x: 10, y: 54, inv: true }, { x: 68, y: 54, inv: true },
-                    { x: 39, y: 65, inv: true },
-                    { x: 10, y: 76, inv: true }, { x: 68, y: 76, inv: true }
-                ];
-            }
-
-            // Append structured matrix elements to the card canvas
             coordinates.forEach(coord => {
                 const pipDiv = document.createElement('div');
                 pipDiv.className = `pip ${coord.inv ? 'inverted' : ''}`;
                 pipDiv.style.left = `${coord.x}%`;
                 pipDiv.style.top = `${coord.y}%`;
                 if (coord.size) pipDiv.style.fontSize = `${coord.size}px`;
-                pipDiv.textContent = sym;
-                pipsMatrix.appendChild(pipDiv);
+                pipDiv.textContent = suit.symbol;
+                pipsContainer.appendChild(pipDiv);
             });
+            cardFaceCenter.appendChild(pipsContainer);
         }
     </script>
 </body>
