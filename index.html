@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #0b0b0b;
+            background-color: #0d0d0d;
             color: #ffffff;
             display: flex;
             flex-direction: column;
@@ -15,12 +15,12 @@
             justify-content: space-between;
             min-height: 100vh;
             margin: 0;
-            padding: 15px 0;
+            padding: 10px 0;
             box-sizing: border-box;
             overflow: hidden;
         }
 
-        /* Top Bar Layout */
+        /* Top Bar Screen Headers */
         .top-bar {
             width: 100%;
             max-width: 360px;
@@ -28,8 +28,8 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            height: 40px;
-            margin-top: 15px;
+            height: 45px;
+            margin-top: 10px;
             z-index: 10;
         }
 
@@ -40,49 +40,51 @@
             text-align: center;
             opacity: 0;
             transition: opacity 0.2s ease-out;
+            letter-spacing: -0.3px;
         }
         .card-title.visible {
             opacity: 1;
         }
 
-        /* COMPLETELY INVISIBLE TRIGGER FOR SETTINGS DRAWER */
+        /* Completely Hidden Hitbox for Configuration Drawer */
         .secret-gear {
             position: absolute;
             right: 20px;
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             background-color: transparent;
             cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* Stealth Custom Settings Panel */
+        /* Stealth Control Config Panel */
         #setup-panel {
             display: none;
             background-color: #161616;
-            border: 1px solid #282828;
+            border: 1px solid #262626;
             padding: 16px;
             border-radius: 14px;
             width: 320px;
             box-sizing: border-box;
             position: absolute;
-            top: 55px;
+            top: 60px;
             z-index: 100;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            box-shadow: 0 12px 36px rgba(0,0,0,0.75);
         }
         #setup-panel h3 {
             margin: 0 0 12px 0;
             color: #e53935;
-            font-size: 15px;
+            font-size: 14px;
             text-align: center;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
         }
         .setup-group {
             margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: #bbb;
+            color: #aaa;
             font-size: 14px;
         }
         .setup-group select {
@@ -91,7 +93,7 @@
             color: #fff;
             border: 1px solid #333;
             border-radius: 8px;
-            width: 120px;
+            width: 125px;
             font-size: 14px;
             outline: none;
         }
@@ -100,12 +102,11 @@
             padding: 4px 10px;
             border-radius: 6px;
             font-size: 11px;
-            letter-spacing: 0.5px;
         }
-        .status-idle { background-color: #2a2a2a; color: #888; }
+        .status-idle { background-color: #262626; color: #777; }
         .status-armed { background-color: #e53935; color: #fff; }
 
-        /* Card Canvas Frame - Shrunk down slightly to fit better like image_5 */
+        /* Card Presentation Frame Sandbox */
         .card-container {
             flex: 1;
             display: flex;
@@ -115,109 +116,109 @@
             position: relative;
         }
 
-        /* Stacking background shadow cards for realistic depth */
+        /* Realistic Multi-layered Stacking Card Shadows */
         .deck-pile-shadow {
             position: absolute;
             background-color: #ffffff;
-            border-radius: 18px;
-            width: 72vw;
-            height: 102vw;
-            max-width: 270px;
-            max-height: 385px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-            transform: rotate(-3deg) translate(-3px, 3px);
-            opacity: 0.2;
+            border-radius: 16px;
+            width: 74vw;
+            height: 106vw;
+            max-width: 275px;
+            max-height: 395px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            transform: rotate(-2.5deg) translate(-2px, 3px);
+            opacity: 0.18;
             pointer-events: none;
         }
         .deck-pile-shadow.two {
-            transform: rotate(1.5deg) translate(2px, -2px);
-            opacity: 0.12;
+            transform: rotate(2deg) translate(2px, -1px);
+            opacity: 0.1;
         }
 
-        /* Fluid Animated Playing Card */
+        /* Figma Inspired Premium Playing Card Structure */
         .playing-card {
             background-color: #ffffff;
-            border-radius: 18px;
-            width: 72vw;
-            height: 102vw;
-            max-width: 270px;
-            max-height: 385px;
-            box-shadow: 0 12px 28px rgba(0,0,0,0.45);
+            border-radius: 16px;
+            width: 74vw;
+            height: 106vw;
+            max-width: 275px;
+            max-height: 395px;
+            box-shadow: 0 14px 32px rgba(0,0,0,0.45);
             position: absolute;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 14px;
+            padding: 12px 14px;
             box-sizing: border-box;
             user-select: none;
             -webkit-user-select: none;
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(40px);
         }
 
-        /* Ultra-Smooth Native Slide Action */
+        /* Native Slide Action Animation Engine */
         .playing-card.dealt {
-            animation: slideCardUp 0.28s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            animation: figmaSlideCardUp 0.26s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
         }
 
-        @keyframes slideCardUp {
+        @keyframes figmaSlideCardUp {
             0% {
-                transform: translateY(45px) scale(0.96) rotate(1deg);
+                transform: translateY(35px) scale(0.97) rotate(0.5deg);
                 opacity: 0;
             }
             100% {
-                transform: translateY(0) scale(1) rotate(-1.5deg);
+                transform: translateY(0) scale(1) rotate(-1.2deg);
                 opacity: 1;
             }
         }
 
-        /* Initial Screen "Tap Anywhere" text */
+        /* App Onboarding Prompt Label */
         .initial-prompt {
             position: absolute;
-            font-size: 19px;
-            color: #444;
+            font-size: 18px;
+            color: #3e3e3e;
             font-weight: 500;
             pointer-events: none;
             text-align: center;
-            transition: opacity 0.2s;
         }
 
-        /* Standard Bicycle Corner Index Styles */
+        /* Classic Minimal Index Corners Layout from Figma design */
         .card-corner {
             display: flex;
             flex-direction: column;
             align-items: center;
             line-height: 0.85;
-            font-weight: 700;
-            font-size: 32px;
-            letter-spacing: -1px;
+            font-weight: 600;
+            font-size: 30px;
+            letter-spacing: -0.5px;
         }
         .card-corner.bottom {
             transform: rotate(180deg);
         }
         .card-corner-suit {
-            font-size: 20px;
-            margin-top: 2px;
+            font-size: 18px;
+            margin-top: 3px;
         }
 
-        /* Precise Center Pip Grid Formatting */
+        /* Geometrically Center Pip Grid Distribution Box */
         .center-pips {
             flex: 1;
             width: 100%;
             height: 100%;
-            max-height: 210px;
+            max-height: 230px;
             position: relative;
             box-sizing: border-box;
+            padding: 0 16px;
         }
 
-        /* Standard Matrix Distribution coordinates for 1-10 pips */
+        /* Coordinate Row Positions for Exact Card Pip Scaling matrices */
         .pip-row {
             display: flex;
             justify-content: space-between;
             position: absolute;
             left: 20px;
             right: 20px;
-            font-size: 38px;
+            font-size: 34px;
         }
         .pip-center-col {
             position: absolute;
@@ -226,29 +227,54 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            font-size: 38px;
+            font-size: 34px;
         }
 
-        /* Clean Minimal Court Card Art Layout to replace the weird bug */
-        .court-art-clean {
-            width: 82%;
-            height: 85%;
-            border: 1.5px solid #eaeaea;
+        /* Figma Symmetrical Symmetrical Dual Court Box Framework Layout */
+        .figma-court-box {
+            width: 84%;
+            height: 86%;
+            border: 1px solid #dcdcdc;
             position: absolute;
-            top: 7.5%;
-            left: 9%;
-            border-radius: 6px;
+            top: 7%;
+            left: 8%;
+            border-radius: 4px;
+            background-color: #faf9f6;
+            box-sizing: border-box;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #fafafa;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            padding: 8px;
         }
-        .court-center-symbol {
-            font-size: 64px;
-            opacity: 0.9;
+        
+        .court-half {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            height: 50%;
+            font-size: 44px;
+            font-weight: bold;
+            color: rgba(0,0,0,0.85);
+        }
+        .court-half.inverted {
+            transform: rotate(180deg);
+            border-top: 1px dashed rgba(0,0,0,0.08);
+        }
+        .court-royal-character {
+            font-size: 26px;
+            font-family: serif;
+            font-weight: 900;
+            border: 1.5px solid currentColor;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
         }
 
-        /* Bottom Bar UI layout configuration */
+        /* Screen Bottom Footers */
         .bottom-bar {
             width: 100%;
             max-width: 360px;
@@ -257,7 +283,7 @@
             align-items: center;
             padding: 0 20px 10px 20px;
             box-sizing: border-box;
-            color: #444444;
+            color: #3a3a3a;
             font-size: 13px;
             z-index: 10;
         }
@@ -268,12 +294,12 @@
             -webkit-tap-highlight-color: transparent;
         }
         .cards-count {
-            color: #666666;
+            color: #555555;
             font-size: 15px;
             font-weight: 500;
         }
         .history-trigger {
-            border: 1px solid #1c1c1c;
+            border: 1px solid #181818;
             background-color: transparent;
             padding: 6px 12px;
             border-radius: 8px;
@@ -287,7 +313,6 @@
 
     <div class="top-bar">
         <div class="card-title" id="display-title"></div>
-        <!-- INVISIBLE HITBOX TAP AREA FOR THE CONFIG MENU -->
         <div class="secret-gear" id="gear-trigger"></div>
     </div>
 
@@ -319,7 +344,7 @@
         </div>
     </div>
 
-    <!-- Main Active Display Area Layout -->
+    <!-- Main Presentation Card Canvas Workspace -->
     <div class="card-container">
         <div class="initial-prompt" id="prompt-text">Tap anywhere to deal.</div>
         
@@ -352,10 +377,10 @@
     <script>
         const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
         const suits = [
-            { symbol: '♠', name: 'Spades', color: '#111111' },
-            { symbol: '♥', name: 'Hearts', color: '#e53935' },
-            { symbol: '♦', name: 'Diamonds', color: '#e53935' },
-            { symbol: '♣', name: 'Clubs', color: '#111111' }
+            { symbol: '♠', name: 'Spades', color: '#1a1a1a' },
+            { symbol: '♥', name: 'Hearts', color: '#dc2626' },
+            { symbol: '♦', name: 'Diamonds', color: '#dc2626' },
+            { symbol: '♣', name: 'Clubs', color: '#1a1a1a' }
         ];
 
         let isArmed = false;
@@ -378,7 +403,7 @@
         const forceValue = document.getElementById('force-value');
         const forceSuit = document.getElementById('force-suit');
 
-        // Secret tap listener to open configuration drawer
+        // Toggle configuration menu via top invisible panel zone
         gearTrigger.addEventListener('click', (e) => {
             e.stopPropagation();
             setupPanel.style.display = (setupPanel.style.display === 'block') ? 'none' : 'block';
@@ -387,7 +412,7 @@
         document.body.addEventListener('click', () => setupPanel.style.display = 'none');
         setupPanel.addEventListener('click', (e) => e.stopPropagation());
 
-        // Stealth arm matrix setup using footer count element click
+        // Stealth arm setup inside the footer statistics counter
         stealthArm.addEventListener('click', (e) => {
             e.stopPropagation();
             isArmed = !isArmed;
@@ -395,9 +420,9 @@
             statusBadge.className = isArmed ? 'status-badge status-armed' : 'status-badge status-idle';
         });
 
-        // Clean Card Dealing Physics Trigger Execution
+        // Deal Event Physics Execution Triggers
         bodyTrigger.addEventListener('click', () => {
-            promptText.style.opacity = '0';
+            if(promptText) promptText.style.display = 'none';
             
             if (runningCount > 1) {
                 runningCount--;
@@ -418,7 +443,7 @@
                 suitObj = suits[Math.floor(Math.random() * suits.length)];
             }
 
-            // Fire reset slide up layout configurations animation frame
+            // Fire reset slide up layouts animation sequences
             activeCard.classList.remove('dealt');
             void activeCard.offsetWidth; 
             activeCard.classList.add('dealt');
@@ -433,46 +458,53 @@
             });
             document.querySelectorAll('.card-corner').forEach(el => el.style.color = suitObj.color);
 
-            // Run structural distribution code engine mapping parameters
-            buildBicyclePipsMatrix(val, suitObj);
+            // Execute Figma Inspired Design Render Compilation Engine
+            buildFigmaPipsMatrix(val, suitObj);
 
             displayTitle.classList.remove('visible');
             setTimeout(() => {
                 displayTitle.textContent = `${val === 'A' ? 'Ace' : val === 'J' ? 'Jack' : val === 'Q' ? 'Queen' : val === 'K' ? 'King' : val} of ${suitObj.name}`;
                 displayTitle.style.color = suitObj.color;
                 displayTitle.classList.add('visible');
-            }, 80);
+            }, 60);
         });
 
-        // Fixed Court Graphic Layout Engine Matrix
-        function buildBicyclePipsMatrix(val, suit) {
+        // Geometric Matrix Vector Compiler built around standard layouts blueprint specs
+        function buildFigmaPipsMatrix(val, suit) {
             pipsMatrix.innerHTML = '';
             const sym = suit.symbol;
 
+            // Premium Symmetrical Court Split View Frame Architecture from the Figma Design Blueprint
             if (['J', 'Q', 'K'].includes(val)) {
-                let crownArtwork = '👑';
                 pipsMatrix.innerHTML = `
-                    <div class="court-art-clean">
-                        <div class="court-center-symbol">${crownArtwork}</div>
+                    <div class="figma-court-box" style="color: ${suit.color}; border-color: ${suit.color}33">
+                        <div class="court-half">
+                            <div class="court-royal-character">${val}</div>
+                            <div>${sym}</div>
+                        </div>
+                        <div class="court-half inverted">
+                            <div class="court-royal-character">${val}</div>
+                            <div>${sym}</div>
+                        </div>
                     </div>`;
                 return;
             }
 
             if (val === 'A') {
-                pipsMatrix.innerHTML = `<div class="pip-center-col" style="top:38%; font-size:64px;">${sym}</div>`;
+                pipsMatrix.innerHTML = `<div class="pip-center-col" style="top:36%; font-size:68px;">${sym}</div>`;
                 return;
             }
 
             if (val === '2') {
                 pipsMatrix.innerHTML = `
-                    <div class="pip-center-col" style="height:76%; top:12%; justify-content:space-between;">
+                    <div class="pip-center-col" style="height:74%; top:13%; justify-content:space-between;">
                         <div>${sym}</div>
                         <div style="transform:rotate(180deg)">${sym}</div>
                     </div>`;
             }
             if (val === '3') {
                 pipsMatrix.innerHTML = `
-                    <div class="pip-center-col" style="height:76%; top:12%; justify-content:space-between;">
+                    <div class="pip-center-col" style="height:74%; top:13%; justify-content:space-between;">
                         <div>${sym}</div>
                         <div>${sym}</div>
                         <div style="transform:rotate(180deg)">${sym}</div>
@@ -480,42 +512,42 @@
             }
             if (val === '4') {
                 pipsMatrix.innerHTML = `
-                    <div class="pip-row" style="top:12%;"><div>${sym}</div><div>${sym}</div></div>
-                    <div class="pip-row" style="bottom:12%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
+                    <div class="pip-row" style="top:13%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-row" style="bottom:13%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
             }
             if (val === '5') {
                 pipsMatrix.innerHTML = `
-                    <div class="pip-row" style="top:12%;"><div>${sym}</div><div>${sym}</div></div>
-                    <div class="pip-center-col" style="top:42%;"><div>${sym}</div></div>
-                    <div class="pip-row" style="bottom:12%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
+                    <div class="pip-row" style="top:13%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-center-col" style="top:41%;"><div>${sym}</div></div>
+                    <div class="pip-row" style="bottom:13%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
             }
             if (val === '6') {
                 pipsMatrix.innerHTML = `
-                    <div class="pip-row" style="top:12%;"><div>${sym}</div><div>${sym}</div></div>
-                    <div class="pip-row" style="top:42%;"><div>${sym}</div><div>${sym}</div></div>
-                    <div class="pip-row" style="bottom:12%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
+                    <div class="pip-row" style="top:13%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-row" style="top:41%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-row" style="bottom:13%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
             }
             if (val === '7') {
                 pipsMatrix.innerHTML = `
-                    <div class="pip-row" style="top:12%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-row" style="top:13%;"><div>${sym}</div><div>${sym}</div></div>
                     <div class="pip-center-col" style="top:27%;"><div>${sym}</div></div>
-                    <div class="pip-row" style="top:42%;"><div>${sym}</div><div>${sym}</div></div>
-                    <div class="pip-row" style="bottom:12%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
+                    <div class="pip-row" style="top:41%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-row" style="bottom:13%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
             }
             if (val === '8') {
                 pipsMatrix.innerHTML = `
-                    <div class="pip-row" style="top:12%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-row" style="top:13%;"><div>${sym}</div><div>${sym}</div></div>
                     <div class="pip-center-col" style="top:27%;"><div>${sym}</div></div>
-                    <div class="pip-row" style="top:42%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-row" style="top:41%;"><div>${sym}</div><div>${sym}</div></div>
                     <div class="pip-center-col" style="bottom:27%; transform:translateX(-50%) rotate(180deg);"><div>${sym}</div></div>
-                    <div class="pip-row" style="bottom:12%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
+                    <div class="pip-row" style="bottom:13%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
             }
             if (val === '9') {
                 pipsMatrix.innerHTML = `
                     <div class="pip-row" style="top:10%;"><div>${sym}</div><div>${sym}</div></div>
-                    <div class="pip-row" style="top:32%;"><div>${sym}</div><div>${sym}</div></div>
-                    <div class="pip-center-col" style="top:42%;"><div>${sym}</div></div>
-                    <div class="pip-row" style="bottom:32%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>
+                    <div class="pip-row" style="top:31%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-center-col" style="top:41%;"><div>${sym}</div></div>
+                    <div class="pip-row" style="bottom:31%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>
                     <div class="pip-row" style="bottom:10%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
             }
             if (val === '10') {
