@@ -15,12 +15,12 @@
             justify-content: space-between;
             min-height: 100vh;
             margin: 0;
-            padding: 20px box-sizing;
+            padding: 10px 0;
             box-sizing: border-box;
             overflow: hidden;
         }
 
-        /* Top Bar Layout matching image_5.png */
+        /* Top Title Layout */
         .top-bar {
             width: 100%;
             max-width: 380px;
@@ -28,36 +28,35 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            height: 50px;
+            height: 40px;
             margin-top: 10px;
+            z-index: 10;
         }
 
         .card-title {
             color: #e53935;
-            font-size: 26px;
+            font-size: 24px;
             font-weight: bold;
             text-align: center;
-            letter-spacing: 0.5px;
-            transition: opacity 0.2s;
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+        }
+        .card-title.visible {
+            opacity: 1;
         }
 
-        /* Hidden trigger button disguised as a subtle icon layout item */
         .secret-gear {
             position: absolute;
-            right: 10px;
-            width: 32px;
-            height: 32px;
-            background-color: #e53935;
-            border-radius: 50%;
+            right: 15px;
+            width: 30px;
+            height: 30px;
+            background-color: transparent;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #ffffff;
-            font-size: 22px;
-            font-weight: bold;
+            color: #333;
+            font-size: 20px;
             cursor: pointer;
-            user-select: none;
-            -webkit-user-select: none;
         }
 
         /* Stealth Custom Settings Panel */
@@ -65,16 +64,14 @@
             display: none;
             background-color: #1a1a1a;
             border: 1px solid #333;
-            color: #fff;
             padding: 15px;
             border-radius: 12px;
             width: 340px;
             box-sizing: border-box;
-            font-size: 14px;
             position: absolute;
-            top: 70px;
+            top: 60px;
             z-index: 100;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
         }
         #setup-panel h3 {
             margin: 0 0 12px 0;
@@ -88,152 +85,198 @@
             justify-content: space-between;
             align-items: center;
         }
-        /* Custom styled flat selectors to bypass iOS wheel menus */
         .setup-group select {
-            padding: 6px 10px;
+            padding: 6px;
             background-color: #2a2a2a;
             color: #fff;
             border: 1px solid #444;
             border-radius: 6px;
             width: 130px;
-            font-size: 14px;
-            outline: none;
         }
         .status-badge {
             font-weight: bold;
             padding: 3px 8px;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 11px;
         }
         .status-idle { background-color: #444; color: #aaa; }
         .status-armed { background-color: #e53935; color: #fff; }
 
-        /* Main Presentation Container */
+        /* Dealing Canvas & Interactive Viewport Stack */
         .card-container {
             flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
             width: 100%;
-            padding: 10px 0;
+            position: relative;
+            perspective: 1000px;
         }
 
-        /* Playing Card Viewport Matching image_5.png proportions */
+        /* Native Pile Deck Layout Base underneath */
+        .deck-pile-shadow {
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 16px;
+            width: 78vw;
+            height: 112vw;
+            max-width: 290px;
+            max-height: 415px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transform: rotate(-4deg) translate(-4px, 4px);
+            opacity: 0.25;
+            pointer-events: none;
+        }
+        .deck-pile-shadow.two {
+            transform: rotate(1deg) translate(2px, -2px);
+            opacity: 0.15;
+        }
+
+        /* Animated Active Playing Card */
         .playing-card {
             background-color: #ffffff;
-            border-radius: 22px;
-            width: 82vw;
-            height: 118vw;
-            max-width: 310px;
-            max-height: 445px;
+            border-radius: 16px;
+            width: 78vw;
+            height: 112vw;
+            max-width: 290px;
+            max-height: 415px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            position: relative;
+            position: absolute;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 18px;
+            padding: 14px;
             box-sizing: border-box;
             user-select: none;
             -webkit-user-select: none;
-            transition: transform 0.15s ease-out;
-            transform: rotate(-2deg); /* Mimics the slight natural tilt seen in image_5.png */
-        }
-        .playing-card:active {
-            transform: scale(0.98) rotate(-2deg);
+            transform: scale(0) rotate(0deg);
+            opacity: 0;
+            transition: none;
         }
 
-        /* Bicycle Rider Back Styled View */
-        .card-back-pattern {
+        /* Dealing Slide-In Animation Mode triggered by Engine */
+        .playing-card.dealt {
+            animation: dealCard 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;
+        }
+
+        @keyframes dealCard {
+            0% {
+                transform: translateY(100vh) scale(0.6) rotate(15deg);
+                opacity: 0;
+            }
+            70% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(0) scale(1) rotate(-2deg);
+                opacity: 1;
+            }
+        }
+
+        /* Initial Screen "Tap Anywhere to Deal" text display wrapper */
+        .initial-prompt {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            bottom: 10px;
-            border: 4px solid #b31010;
-            border-radius: 12px;
-            background-color: #b31010;
-            /* Elaborate Victorian style pattern layer mimicking a rider back structure */
-            background-image: 
-                radial-gradient(circle at 50% 50%, #ffffff 2px, transparent 3px),
-                radial-gradient(circle at 30% 40%, transparent 8px, #ffffff 1px, transparent 10px),
-                radial-gradient(circle at 70% 40%, transparent 8px, #ffffff 1px, transparent 10px),
-                linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.15) 75%),
-                linear-gradient(135deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.15) 75%);
-            background-size: 20px 20px, 40px 40px, 40px 40px, 10px 10px, 10px 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .card-back-scrollwork {
-            width: 85%;
-            height: 85%;
-            border: 2px dashed rgba(255,255,255,0.4);
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .card-back-centerpiece {
-            width: 50px;
-            height: 70px;
-            border: 2px solid rgba(255,255,255,0.6);
-            border-radius: 50%;
-            background: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.3) 2px, rgba(255,255,255,0.3) 4px);
+            font-size: 20px;
+            color: #666;
+            font-weight: 500;
+            pointer-events: none;
+            text-align: center;
+            transition: opacity 0.2s;
         }
 
-        /* Native Card Layout Indices */
+        /* Standard Bicycle Corner Index Structures */
         .card-corner {
             display: flex;
             flex-direction: column;
             align-items: center;
-            line-height: 0.9;
+            line-height: 0.85;
             font-weight: 700;
-            font-size: 38px;
-            letter-spacing: -2px;
+            font-size: 34px;
+            letter-spacing: -1px;
         }
         .card-corner.bottom {
             transform: rotate(180deg);
         }
         .card-corner-suit {
-            font-size: 26px;
-            margin-top: 2px;
+            font-size: 22px;
+            margin-top: 3px;
         }
 
-        /* Central Pips System matching precise structural layouts */
+        /* Precise Bicycle Multi-Pip Matrix Layout Generator Grid */
         .center-pips {
             flex: 1;
+            width: 100%;
+            height: 100%;
+            max-height: 240px;
+            padding: 10px 25px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* Core Geometric Engine Rows for standard 1 to 10 cards mapping */
+        .pip-row {
+            display: flex;
+            justify-content: space-between;
+            position: absolute;
+            left: 25px;
+            right: 25px;
+            font-size: 40px;
+        }
+        .pip-center-col {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 40px;
+        }
+
+        /* Court Royal Card Portrait Silhouette Graphics Vector Box */
+        .court-art {
+            width: 100%;
+            height: 100%;
+            border: 2px solid #111;
+            box-sizing: border-box;
+            position: relative;
+            background-color: #fcf8f2;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 75px;
-            position: relative;
+            border-radius: 4px;
         }
-        
-        /* Layout structures for different pip distributions */
-        .pip-grid-3 {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 80%;
-            font-size: 55px;
+        .court-art::before, .court-art::after {
+            content: '';
+            position: absolute;
+            width: 80%;
+            height: 42%;
+            border: 1px rgba(0,0,0,0.15) solid;
+        }
+        .court-art::before { top: 6%; }
+        .court-art::after { bottom: 6%; transform: rotate(180deg); }
+
+        .court-graphic {
+            font-size: 110px;
+            opacity: 0.85;
+            font-weight: normal;
         }
 
-        /* Stealth Control Triggers in Footer */
+        /* Bottom Bar UI matching recording files */
         .bottom-bar {
             width: 100%;
             max-width: 380px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 15px 20px 15px;
+            padding: 0 25px 15px 25px;
             box-sizing: border-box;
             color: #555555;
             font-size: 13px;
+            z-index: 10;
         }
         .cards-left {
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
         }
         .cards-count {
             color: #888888;
@@ -241,94 +284,74 @@
             font-weight: 500;
         }
         .history-trigger {
-            border: 1px solid #333333;
+            border: 1px solid #222222;
+            background-color: transparent;
             padding: 6px 14px;
             border-radius: 8px;
             color: #e53935;
             font-size: 13px;
             font-weight: 600;
-            background: transparent;
-            user-select: none;
-            -webkit-user-select: none;
         }
     </style>
 </head>
-<body>
+<body id="body-trigger">
 
-    <!-- Top Navigation Section -->
     <div class="top-bar">
-        <div class="card-title" id="display-title">Card Generator</div>
-        <!-- Disguised configuration trigger matching layout aesthetics -->
-        <div class="secret-gear" id="gear-trigger">+</div>
+        <div class="card-title" id="display-title"></div>
+        <div class="secret-gear" id="gear-trigger"></div>
     </div>
 
-    <!-- Configuration Settings Drawer -->
     <div id="setup-panel">
-        <h3>Trick Configuration</h3>
+        <h3>Engine Settings</h3>
         <div class="setup-group">
             <label for="force-value">Force Value:</label>
             <select id="force-value">
-                <option value="A">Ace</option>
-                <option value="2">2</option>
-                <option value="3" selected>3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="J">Jack</option>
-                <option value="Q">Queen</option>
+                <option value="A">Ace</option><option value="2">2</option>
+                <option value="3">3</option><option value="4">4</option>
+                <option value="5">5</option><option value="6">6</option>
+                <option value="7">7</option><option value="8">8</option>
+                <option value="9">9</option><option value="10" selected>10</option>
+                <option value="J">Jack</option><option value="Q">Queen</option>
                 <option value="K">King</option>
             </select>
         </div>
         <div class="setup-group">
             <label for="force-suit">Force Suit:</label>
             <select id="force-suit">
-                <option value="♠">Spades</option>
-                <option value="♥">Hearts</option>
-                <option value="♦" selected>Diamonds</option>
-                <option value="♣">Clubs</option>
+                <option value="♠">Spades</option><option value="♥" selected>Hearts</option>
+                <option value="♦">Diamonds</option><option value="♣">Clubs</option>
             </select>
         </div>
         <div class="setup-group">
-            <span>Engine Mode:</span>
-            <span id="status-badge" class="status-badge status-idle">RANDOM GENERATION</span>
+            <span>Status:</span>
+            <span id="status-badge" class="status-badge status-idle">RANDOM SELECTION</span>
         </div>
     </div>
 
-    <!-- Main Deck Presentation Screen Area -->
     <div class="card-container">
-        <div class="playing-card" id="deck-card">
-            <!-- Initial Card Back Mode (Bicycle Inspired Styling) -->
-            <div class="card-back-pattern" id="card-back">
-                <div class="card-back-scrollwork">
-                    <div class="card-back-centerpiece"></div>
-                </div>
-            </div>
+        <div class="initial-prompt" id="prompt-text">Tap anywhere to deal.</div>
+        
+        <div class="deck-pile-shadow" id="shadow-1" style="display: none;"></div>
+        <div class="deck-pile-shadow two" id="shadow-2" style="display: none;"></div>
 
-            <!-- Dynamic Front View Face Components (Hidden Initially) -->
-            <div class="card-corner top" id="corner-top" style="visibility: hidden;">
-                <div class="card-value-id">3</div>
-                <div class="card-corner-suit">♦</div>
+        <div class="playing-card" id="active-card">
+            <div class="card-corner top">
+                <div class="val-idx"></div>
+                <div class="suit-idx"></div>
             </div>
             
-            <div class="center-pips" id="pips-area" style="visibility: hidden;">
-                <!-- Internal layouts handled inside JavaScript engines -->
-            </div>
+            <div class="center-pips" id="pips-matrix"></div>
             
-            <div class="card-corner bottom" id="corner-bottom" style="visibility: hidden;">
-                <div class="card-value-id">3</div>
-                <div class="card-corner-suit">♦</div>
+            <div class="card-corner bottom">
+                <div class="val-idx"></div>
+                <div class="suit-idx"></div>
             </div>
         </div>
     </div>
 
-    <!-- Screen Footer elements containing secondary stealth activation items -->
     <div class="bottom-bar">
-        <div class="cards-left" id="stealth-arm-trigger">
-            <span class="cards-count">52</span>
+        <div class="cards-left" id="stealth-arm">
+            <span class="cards-count" id="count-num">108</span>
             <span>Cards remaining</span>
         </div>
         <button class="history-trigger" onclick="return false;">Card History</button>
@@ -337,124 +360,186 @@
     <script>
         const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
         const suits = [
-            { symbol: '♠', name: 'Spades', color: '#111111' },
-            { symbol: '♥', name: 'Hearts', color: '#e53935' },
-            { symbol: '♦', name: 'Diamonds', color: '#e53935' },
-            { symbol: '♣', name: 'Clubs', color: '#111111' }
+            { symbol: '♠', name: 'Spades', color: '#111111', courtClass: '♠' },
+            { symbol: '♥', name: 'Hearts', color: '#e53935', courtClass: '♥' },
+            { symbol: '♦', name: 'Diamonds', color: '#e53935', courtClass: '♦' },
+            { symbol: '♣', name: 'Clubs', color: '#111111', courtClass: '♣' }
         ];
 
         let isArmed = false;
-        let hasDrawn = false;
+        let runningCount = 108;
 
+        const bodyTrigger = document.getElementById('body-trigger');
         const gearTrigger = document.getElementById('gear-trigger');
         const setupPanel = document.getElementById('setup-panel');
-        const stealthArmTrigger = document.getElementById('stealth-arm-trigger');
+        const stealthArm = document.getElementById('stealth-arm');
         const statusBadge = document.getElementById('status-badge');
+        const countNum = document.getElementById('count-num');
+        const promptText = document.getElementById('prompt-text');
         
-        const deckCard = document.getElementById('deck-card');
-        const cardBack = document.getElementById('card-back');
+        const activeCard = document.getElementById('active-card');
         const displayTitle = document.getElementById('display-title');
-        
-        const cornerTop = document.getElementById('corner-top');
-        const cornerBottom = document.getElementById('corner-bottom');
-        const pipsArea = document.getElementById('pips-area');
-        
-        const forceValueSelect = document.getElementById('force-value');
-        const forceSuitSelect = document.getElementById('force-suit');
+        const pipsMatrix = document.getElementById('pips-matrix');
+        const shadow1 = document.getElementById('shadow-1');
+        const shadow2 = document.getElementById('shadow-2');
 
-        // Toggle the visibility of the configuration box via top right button
+        const forceValue = document.getElementById('force-value');
+        const forceSuit = document.getElementById('force-suit');
+
+        // Toggle Configuration UI Drawer via top hidden gear position
         gearTrigger.addEventListener('click', (e) => {
             e.stopPropagation();
             setupPanel.style.display = (setupPanel.style.display === 'block') ? 'none' : 'block';
         });
 
-        // Close settings drawer when tapping anywhere else on screen
-        document.body.addEventListener('click', () => {
-            setupPanel.style.display = 'none';
-        });
+        document.body.addEventListener('click', () => setupPanel.style.display = 'none');
         setupPanel.addEventListener('click', (e) => e.stopPropagation());
 
-        // Secretly Arm or Disarm the force by tapping the "Cards remaining" text area in footer
-        stealthArmTrigger.addEventListener('click', (e) => {
+        // Stealth arm mechanism triggered by clicking the counter block
+        stealthArm.addEventListener('click', (e) => {
             e.stopPropagation();
             isArmed = !isArmed;
-            if (isArmed) {
-                statusBadge.textContent = 'NEXT FORCE ACTIVE';
-                statusBadge.className = 'status-badge status-armed';
-            } else {
-                statusBadge.textContent = 'RANDOM GENERATION';
-                statusBadge.className = 'status-badge status-idle';
-            }
+            statusBadge.textContent = isArmed ? 'NEXT SELECTION FORCED' : 'RANDOM SELECTION';
+            statusBadge.className = isArmed ? 'status-badge status-armed' : 'status-badge status-idle';
         });
 
-        // Handle Card Drawing Logic on tapping the main playing card interface
-        deckCard.addEventListener('click', (e) => {
-            e.stopPropagation();
+        // Dealing Physics Trigger Action map
+        bodyTrigger.addEventListener('click', () => {
+            promptText.style.opacity = '0';
             
-            let finalValue = '';
-            let finalSuit = null;
-
-            if (isArmed) {
-                finalValue = forceValueSelect.value;
-                const targetSuitSymbol = forceSuitSelect.value;
-                finalSuit = suits.find(s => s.symbol === targetSuitSymbol);
-
-                // Disarm automatically after action execution
-                isArmed = false;
-                statusBadge.textContent = 'RANDOM GENERATION';
-                statusBadge.className = 'status-badge status-idle';
-            } else {
-                finalValue = values[Math.floor(Math.random() * values.length)];
-                finalSuit = suits[Math.floor(Math.random() * suits.length)];
+            // Decrement remaining cards counter naturally to mimic continuous deck tracking
+            if (runningCount > 1) {
+                runningCount--;
+                countNum.textContent = runningCount;
             }
 
-            // Remove the Bicycle back view completely
-            cardBack.style.display = 'none';
+            let val = '';
+            let suitObj = null;
 
-            // Configure corner textual indices updates
-            document.querySelectorAll('.card-value-id').forEach(el => el.textContent = finalValue);
-            document.querySelectorAll('.card-corner-suit').forEach(el => {
-                el.textContent = finalSuit.symbol;
-                el.style.color = finalSuit.color;
+            if (isArmed) {
+                val = forceValue.value;
+                suitObj = suits.find(s => s.symbol === forceSuit.value);
+                isArmed = false;
+                statusBadge.textContent = 'RANDOM SELECTION';
+                statusBadge.className = 'status-badge status-idle';
+            } else {
+                val = values[Math.floor(Math.random() * values.length)];
+                suitObj = suits[Math.floor(Math.random() * suits.length)];
+            }
+
+            // Cleanly trigger and reset native dealing animation stack state
+            activeCard.classList.remove('dealt');
+            void activeCard.offsetWidth; // Force Reflow layout reset
+            activeCard.classList.add('dealt');
+
+            // Render background fake stack elements to give the card pile visual depth
+            shadow1.style.display = 'block';
+            shadow2.style.display = 'block';
+            activeCard.style.opacity = '1';
+
+            // Apply global card indices configurations colors
+            document.querySelectorAll('.val-idx').forEach(el => el.textContent = val);
+            document.querySelectorAll('.suit-idx').forEach(el => {
+                el.textContent = suitObj.symbol;
+                el.style.color = suitObj.color;
             });
-            cornerTop.style.color = finalSuit.color;
-            cornerBottom.style.color = finalSuit.color;
+            document.querySelectorAll('.card-corner').forEach(el => el.style.color = suitObj.color);
 
-            // Make faces elements active visually
-            cornerTop.style.visibility = 'visible';
-            cornerBottom.style.visibility = 'visible';
-            pipsArea.style.visibility = 'visible';
+            // Execute geometric matrix compilation engine
+            buildBicyclePipsMatrix(val, suitObj);
 
-            // Render matching interior pip counts layouts matching original card shapes
-            renderPips(finalValue, finalSuit);
-
-            // Update top text title matching display profile design in image_5.png
-            displayTitle.textContent = `${finalValue} of ${finalSuit.name}`;
-            displayTitle.style.color = finalSuit.color;
+            // Smoothly render top display labels text animations matching recordings
+            displayTitle.classList.remove('visible');
+            setTimeout(() => {
+                displayTitle.textContent = `${val === 'A' ? 'Ace' : val === 'J' ? 'Jack' : val === 'Q' ? 'Queen' : val === 'K' ? 'King' : val} of ${suitObj.name}`;
+                displayTitle.style.color = suitObj.color;
+                displayTitle.classList.add('visible');
+            }, 150);
         });
 
-        function renderPips(value, suit) {
-            pipsArea.innerHTML = '';
-            pipsArea.style.color = suit.color;
+        // Comprehensive layout coordinate rendering system for exact Bicycle Standard distribution matches
+        function buildBicyclePipsMatrix(val, suit) {
+            pipsMatrix.innerHTML = '';
+            const sym = suit.symbol;
 
-            // Handle clean structural layout setups for basic presentation 
-            if (['J', 'Q', 'K'].includes(value)) {
-                pipsArea.style.fontSize = '110px';
-                pipsArea.textContent = value;
-            } else if (value === 'A') {
-                pipsArea.style.fontSize = '100px';
-                pipsArea.textContent = suit.symbol;
-            } else if (value === '3') {
-                pipsArea.innerHTML = `
-                    <div class="pip-grid-3">
-                        <div>${suit.symbol}</div>
-                        <div>${suit.symbol}</div>
-                        <div>${suit.symbol}</div>
+            if (['J', 'Q', 'K'].includes(val)) {
+                let royalIcon = val === 'J' ? '🂫' : val === 'Q' ? '🂭' : '🂮';
+                // Use matching suit icons to display generic classic royal silhouette shapes
+                pipsMatrix.innerHTML = `
+                    <div class="court-art">
+                        <div class="court-graphic" style="color: ${suit.color}">${royalIcon}</div>
                     </div>`;
-            } else {
-                // Multi-pip block fallback array
-                pipsArea.style.fontSize = '75px';
-                pipsArea.textContent = suit.symbol;
+                return;
+            }
+
+            if (val === 'A') {
+                pipsMatrix.innerHTML = `<div class="pip-center-col" style="top:40%; font-size:75px;">${sym}</div>`;
+                return;
+            }
+
+            if (val === '2') {
+                pipsMatrix.innerHTML = `
+                    <div class="pip-center-col" style="height:80%; top:10%; justify-content:space-between;">
+                        <div>${sym}</div>
+                        <div style="transform:rotate(180deg)">${sym}</div>
+                    </div>`;
+            }
+            if (val === '3') {
+                pipsMatrix.innerHTML = `
+                    <div class="pip-center-col" style="height:80%; top:10%; justify-content:space-between;">
+                        <div>${sym}</div>
+                        <div>${sym}</div>
+                        <div style="transform:rotate(180deg)">${sym}</div>
+                    </div>`;
+            }
+            if (val === '4') {
+                pipsMatrix.innerHTML = `
+                    <div class="pip-row" style="top:12%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-row" style="bottom:12%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
+            }
+            if (val === '5') {
+                pipsMatrix.innerHTML = `
+                    <div class="pip-row" style="top:12%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-center-col" style="top:44%;"><div>${sym}</div></div>
+                    <div class="pip-row" style="bottom:12%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
+            }
+            if (val === '6') {
+                pipsMatrix.innerHTML = `
+                    <div class="pip-row" style="top:12%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-row" style="top:44%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-row" style="bottom:12%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
+            }
+            if (val === '7') {
+                pipsMatrix.innerHTML = `
+                    <div class="pip-row" style="top:12%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-center-col" style="top:28%;"><div>${sym}</div></div>
+                    <div class="pip-row" style="top:44%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-row" style="bottom:12%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
+            }
+            if (val === '8') {
+                pipsMatrix.innerHTML = `
+                    <div class="pip-row" style="top:12%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-center-col" style="top:28%;"><div>${sym}</div></div>
+                    <div class="pip-row" style="top:44%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-center-col" style="bottom:28%; transform:translateX(-50%) rotate(180deg);"><div>${sym}</div></div>
+                    <div class="pip-row" style="bottom:12%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
+            }
+            if (val === '9') {
+                pipsMatrix.innerHTML = `
+                    <div class="pip-row" style="top:10%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-row" style="top:32%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-center-col" style="top:44%;"><div>${sym}</div></div>
+                    <div class="pip-row" style="bottom:32%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>
+                    <div class="pip-row" style="bottom:10%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
+            }
+            if (val === '10') {
+                pipsMatrix.innerHTML = `
+                    <div class="pip-row" style="top:10%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-center-col" style="top:22%;"><div>${sym}</div></div>
+                    <div class="pip-row" style="top:34%;"><div>${sym}</div><div>${sym}</div></div>
+                    <div class="pip-row" style="bottom:34%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>
+                    <div class="pip-center-col" style="bottom:22%; transform:translateX(-50%) rotate(180deg);"><div>${sym}</div></div>
+                    <div class="pip-row" style="bottom:10%;"><div style="transform:rotate(180deg)">${sym}</div><div style="transform:rotate(180deg)">${sym}</div></div>`;
             }
         }
     </script>
